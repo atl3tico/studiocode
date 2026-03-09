@@ -1,0 +1,111 @@
+---
+---
+
+<!-- Team collab banner -->
+<section class="collab-banner">
+  <div class="collab-text">
+    <h2>Tu equipo de diseño web<br />siempre disponible por WhatsApp</h2>
+    <p>Sin tickets de soporte. Sin esperar días. Respondemos en horas y resolvemos de verdad.</p>
+    <div class="collab-btns">
+      <a
+        href="https://wa.me/34600000000"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn-white"
+      >💬 Escríbenos ahora</a>
+      <a href="#planes" class="btn-ghost">Ver planes →</a>
+    </div>
+  </div>
+  <div class="collab-img">
+    <img src="/images/team-collab.webp" alt="Colaboración en equipo" />
+  </div>
+</section>
+
+<!-- Workspace hero banner -->
+<div class="workspace-banner">
+  <img src="/images/workspace.webp" alt="Espacio de trabajo creativo" class="workspace-img" />
+  <div class="workspace-overlay">
+    <div class="section-label" style="color:#A78BF5;">Nuestro estudio</div>
+    <h2>Diseño con propósito,<br />código con cariño</h2>
+    <p>Cada web que hacemos es un proyecto en el que creemos. Tu éxito es el nuestro.</p>
+  </div>
+</div>
+
+<style>
+/* ── COLLAB BANNER ── */
+.collab-banner {
+  background: linear-gradient(135deg, var(--purple) 0%, #4B2EB5 100%);
+  color: white;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 40px;
+  padding: 56px 7%;
+}
+
+.collab-text h2 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-weight: 900;
+  line-height: 1.2;
+}
+.collab-text p { margin-top: 12px; opacity: 0.75; font-size: 1rem; }
+
+.collab-btns { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 28px; }
+
+.btn-white {
+  background: white;
+  color: var(--purple);
+  padding: 14px 28px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+.btn-white:hover { opacity: 0.9; }
+
+.btn-ghost {
+  border: 1.5px solid rgba(255,255,255,0.35);
+  color: white;
+  padding: 14px 28px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: border-color 0.2s;
+}
+.btn-ghost:hover { border-color: rgba(255,255,255,0.8); }
+
+.collab-img { max-width: 280px; }
+.collab-img img { width: 100%; }
+
+/* ── WORKSPACE BANNER ── */
+.workspace-banner { position: relative; overflow: hidden; background: #eeeadc; }
+.workspace-img { width: 100%; height: 380px; object-fit: cover; display: block; }
+.workspace-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgba(26,16,48,0.85) 30%, transparent 70%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 7%;
+}
+.workspace-overlay h2 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-weight: 900;
+  color: white;
+  line-height: 1.2;
+  max-width: 420px;
+  margin-top: 8px;
+}
+.workspace-overlay p { color: rgba(255,255,255,0.6); margin-top: 12px; font-size: 0.95rem; max-width: 360px; line-height: 1.65; }
+
+@media (max-width: 768px) {
+  .collab-banner { grid-template-columns: 1fr; text-align: center; }
+  .collab-btns   { justify-content: center; }
+  .collab-img    { display: none; }
+}
+</style>

@@ -1,0 +1,217 @@
+---
+---
+
+<section class="hero">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <div class="hero-content">
+    <div class="hero-badge">
+      🎉 Nuevas webs para 2026 — Aprovecha la subvención del Kit Digital
+    </div>
+
+    <h1>
+      Tu negocio merece<br />
+      una web que <span class="squiggle-wrap"><em>trabaje</em><svg class="squiggle" viewBox="0 0 220 12" preserveAspectRatio="none" aria-hidden="true"><path d="M2,9 C18,3 34,3 50,9 C66,15 82,15 98,9 C114,3 130,3 146,9 C162,15 178,15 194,9 C206,4 214,3 218,5" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/></svg></span><br />
+      mientras tú duermes
+    </h1>
+
+    <p class="hero-sub">
+      Diseñamos y desarrollamos webs profesionales para negocios reales.<br />
+      Sin complicaciones. Con resultados. Y sí, subvencionable hasta el 100%.
+    </p>
+
+    <div class="hero-btns">
+      <a href="#planes" class="btn-primary">Ver planes →</a>
+      <a href="https://wa.me/34600000000" target="_blank" rel="noopener noreferrer" class="btn-secondary">
+        💬 Hablar con nosotros
+      </a>
+    </div>
+  </div>
+
+  <div class="hero-img">
+    <img src="/images/hero-character.webp" alt="Diseño web profesional" loading="eager" fetchpriority="high" decoding="async" />
+  </div>
+</section>
+
+<style>
+.hero {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 48px;
+  padding: 120px 8% 80px;
+  position: relative;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: left;
+  z-index: 2;
+}
+
+.hero-img {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+.hero-img img {
+  width: 100%;
+  max-width: 520px;
+  height: auto;
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.12;
+  pointer-events: none;
+}
+.blob-1 { width: 520px; height: 520px; background: var(--purple); top: -120px; right: -100px; }
+.blob-2 { width: 420px; height: 420px; background: var(--orange);  bottom: -60px; left: -90px; }
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--orange-light);
+  border: 1px solid #FFD4A8;
+  color: var(--orange);
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 6px 16px;
+  border-radius: 100px;
+  margin-bottom: 28px;
+  letter-spacing: 0.02em;
+  animation: fadeUp 0.6s ease both;
+  width: fit-content;
+}
+.hero-badge::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  background: var(--orange);
+  border-radius: 50%;
+}
+
+h1 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(2.8rem, 6vw, 5rem);
+  font-weight: 900;
+  line-height: 1.05;
+  color: var(--dark);
+  max-width: 820px;
+  animation: fadeUp 0.7s 0.1s ease both;
+}
+
+/* ── SQUIGGLE (fly.io style) ── */
+.squiggle-wrap {
+  position: relative;
+  display: inline-block;
+  color: var(--purple);
+  white-space: nowrap;
+}
+
+.squiggle-wrap em {
+  font-style: italic;
+  display: inline-block;
+  transform: rotate(-2deg);
+  transform-origin: center bottom;
+}
+
+.squiggle {
+  position: absolute;
+  left: 0;
+  bottom: -0.18em;
+  width: 100%;
+  height: 0.35em;
+  color: var(--orange);
+  stroke-dasharray: 260;
+  stroke-dashoffset: 260;
+  animation: squiggleDraw 0.7s 0.75s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  overflow: visible;
+}
+
+@keyframes squiggleDraw {
+  to { stroke-dashoffset: 0; }
+}
+
+h1:hover .squiggle {
+  stroke-dashoffset: 260;
+  animation: squiggleDraw 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.hero-sub {
+  margin-top: 24px;
+  font-size: 1.15rem;
+  color: var(--muted);
+  max-width: 560px;
+  line-height: 1.65;
+  animation: fadeUp 0.7s 0.2s ease both;
+}
+
+.hero-btns {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 36px;
+  animation: fadeUp 0.7s 0.3s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Tablet: reducir padding y fuente pero mantener 2 columnas */
+@media (max-width: 1024px) {
+  .hero {
+    padding: 100px 5% 60px;
+    gap: 32px;
+  }
+
+  h1 {
+    font-size: clamp(2.2rem, 4.5vw, 3.2rem);
+  }
+}
+
+/* Móvil: una sola columna, imagen debajo */
+@media (max-width: 640px) {
+  .hero {
+    grid-template-columns: 1fr;
+    padding: 80px 5% 48px;
+    gap: 32px;
+    text-align: center;
+  }
+
+  .hero-badge {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-sub {
+    max-width: 100%;
+  }
+
+  .hero-btns {
+    justify-content: center;
+  }
+
+  .hero-img img {
+    max-width: 280px;
+    margin: 0 auto;
+    display: block;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 8vw, 2.8rem);
+  }
+}
+</style>

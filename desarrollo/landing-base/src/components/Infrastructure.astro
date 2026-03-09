@@ -1,0 +1,74 @@
+---
+const items = [
+  'Servidores en la UE (cumple RGPD)',
+  'CDN global para carga ultrarrápida',
+  'Backups automáticos diarios',
+  'SSL gratuito y renovación automática',
+];
+---
+
+<section class="section infra-section">
+  <div class="grants-inner">
+
+    <div class="animate-in">
+      <div class="section-label">Infraestructura</div>
+      <h2 class="section-title">
+        Hosting europeo.<br /><em>99.9% uptime.</em> Sin excusas.
+      </h2>
+      <p class="infra-text">
+        Tus clientes llegan a tu web a cualquier hora. Servidores en Europa con backups diarios,
+        certificado SSL incluido y monitoreo 24/7. Si algo falla (raro), lo arreglamos antes de
+        que te enteres.
+      </p>
+      <ul class="infra-list">
+        {items.map((item) => (
+          <li>
+            <span class="check">✓</span>
+            {item}
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="grants-img animate-in">
+      <img src="/images/server-uptime.webp" alt="Servidor con 99.9% uptime" />
+    </div>
+
+  </div>
+</section>
+
+<style>
+.infra-section { background: #f8f8f8; }
+
+.grants-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.grants-img { text-align: center; }
+.grants-img img { max-width: 100%; width: 100%; }
+
+.infra-text { margin-top: 14px; color: var(--muted); font-size: 0.95rem; line-height: 1.65; }
+
+.infra-list { list-style: none; margin-top: 24px; }
+.infra-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+  color: var(--text);
+}
+.infra-list li:last-child { border-bottom: none; }
+.check { color: var(--purple); font-weight: 700; }
+
+@media (max-width: 768px) {
+  .grants-inner { grid-template-columns: 1fr; gap: 40px; }
+  .grants-img img { max-width: 480px; margin: 0 auto; display: block; }
+}
+</style>

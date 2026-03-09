@@ -1,0 +1,303 @@
+---
+interface Props {
+  /** Mostrar campo empresa */
+  showCompany?: boolean
+  /** Mostrar campo fecha de cita */
+  showAppointment?: boolean
+  /** Texto del botón */
+  submitLabel?: string
+}
+const {
+  showCompany = false,
+  showAppointment = false,
+  submitLabel = 'Enviar consulta',
+} = Astro.props
+---
+
+<form
+  id="lead-form"
+  novalidate
+  class="space-y-5 max-w-lg"
+  aria-label="Formulario de contacto"
+>
+  <!-- Nombre -->
+  <div>
+    <label for="lf-name" class="block text-sm font-medium text-gray-700">
+      Nombre <span class="text-red-500" aria-hidden="true">*</span>
+    </label>
+    <input
+      type="text"
+      id="lf-name"
+      name="name"
+      required
+      minlength="2"
+      autocomplete="name"
+      class="lf-input mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+    />
+    <p class="lf-error hidden mt-1 text-xs text-red-600" role="alert"></p>
+  </div>
+
+  <!-- Email -->
+  <div>
+    <label for="lf-email" class="block text-sm font-medium text-gray-700">
+      Email <span class="text-red-500" aria-hidden="true">*</span>
+    </label>
+    <input
+      type="email"
+      id="lf-email"
+      name="email"
+      required
+      autocomplete="email"
+      class="lf-input mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+    />
+    <p class="lf-error hidden mt-1 text-xs text-red-600" role="alert"></p>
+  </div>
+
+  <!-- Teléfono -->
+  <div>
+    <label for="lf-phone" class="block text-sm font-medium text-gray-700">Teléfono</label>
+    <input
+      type="tel"
+      id="lf-phone"
+      name="phone"
+      autocomplete="tel"
+      class="lf-input mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+    />
+    <p class="lf-error hidden mt-1 text-xs text-red-600" role="alert"></p>
+  </div>
+
+  <!-- Empresa (condicional) -->
+  {showCompany && (
+    <div>
+      <label for="lf-company" class="block text-sm font-medium text-gray-700">Empresa</label>
+      <input
+        type="text"
+        id="lf-company"
+        name="company"
+        autocomplete="organization"
+        class="lf-input mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+      />
+    </div>
+  )}
+
+  <!-- Cita (condicional) -->
+  {showAppointment && (
+    <div>
+      <label for="lf-appointment" class="block text-sm font-medium text-gray-700">
+        Fecha y hora de cita
+      </label>
+      <input
+        type="datetime-local"
+        id="lf-appointment"
+        name="appointment"
+        class="lf-input mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+      />
+    </div>
+  )}
+
+  <!-- Mensaje -->
+  <div>
+    <label for="lf-message" class="block text-sm font-medium text-gray-700">
+      Mensaje <span class="text-red-500" aria-hidden="true">*</span>
+    </label>
+    <textarea
+      id="lf-message"
+      name="message"
+      rows="4"
+      required
+      minlength="10"
+      class="lf-input mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
+    ></textarea>
+    <p class="lf-error hidden mt-1 text-xs text-red-600" role="alert"></p>
+  </div>
+
+  <!-- Submit -->
+  <div class="flex items-center gap-4">
+    <button
+      id="lf-submit"
+      type="submit"
+      class="inline-flex items-center gap-2 rounded-md bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      <span id="lf-btn-text">{submitLabel}</span>
+      <!-- Spinner (visible sólo durante envío) -->
+      <svg
+        id="lf-spinner"
+        class="hidden h-4 w-4 animate-spin"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+      </svg>
+    </button>
+    <p id="lf-status" class="hidden text-sm font-medium" role="status" aria-live="polite"></p>
+  </div>
+</form>
+
+<!-- ─── Estado "Gracias" ────────────────────────────────────────────────────── -->
+<div
+  id="lead-success"
+  class="hidden max-w-lg rounded-lg border border-green-200 bg-green-50 p-6 text-center"
+  role="status"
+  aria-live="polite"
+>
+  <svg class="mx-auto mb-3 h-12 w-12 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+  </svg>
+  <h3 class="text-lg font-semibold text-green-800">¡Mensaje recibido!</h3>
+  <p class="mt-1 text-sm text-green-700">Nos pondremos en contacto contigo en breve.</p>
+  <p id="lead-ics-note" class="mt-2 hidden text-xs text-green-600">
+    📅 El archivo de cita (.ics) se ha descargado automáticamente.
+  </p>
+</div>
+
+<script>
+// ─── UTM helpers ──────────────────────────────────────────────────────────────
+
+function readUtmCookie(): Record<string, string> {
+  try {
+    const raw = document.cookie.split(';').find((c) => c.trim().startsWith('_utm='))
+    if (!raw) return {}
+    return JSON.parse(decodeURIComponent(raw.split('=').slice(1).join('=')))
+  } catch {
+    return {}
+  }
+}
+
+// ─── Client-side validation ───────────────────────────────────────────────────
+
+type FieldName = 'name' | 'email' | 'phone' | 'message'
+
+const VALIDATORS: Partial<Record<FieldName, (v: string) => string | null>> = {
+  name: (v) => (v.length >= 2 ? null : 'Nombre obligatorio (mínimo 2 caracteres)'),
+  email: (v) => (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? null : 'Email no válido'),
+  phone: (v) => (v === '' || v.length >= 9 ? null : 'Teléfono no válido (mínimo 9 dígitos)'),
+  message: (v) => (v.length >= 10 ? null : 'El mensaje debe tener al menos 10 caracteres'),
+}
+
+function validateField(input: HTMLInputElement | HTMLTextAreaElement): string | null {
+  const name = input.name as FieldName
+  const validator = VALIDATORS[name]
+  return validator ? validator(input.value.trim()) : null
+}
+
+function showFieldError(input: HTMLInputElement | HTMLTextAreaElement, msg: string | null) {
+  const wrapper = input.closest('div')!
+  const errEl = wrapper.querySelector<HTMLParagraphElement>('.lf-error')
+  if (!errEl) return
+  if (msg) {
+    errEl.textContent = msg
+    errEl.classList.remove('hidden')
+    input.classList.add('border-red-500')
+    input.setAttribute('aria-invalid', 'true')
+  } else {
+    errEl.classList.add('hidden')
+    input.classList.remove('border-red-500')
+    input.removeAttribute('aria-invalid')
+  }
+}
+
+// ─── Form logic ───────────────────────────────────────────────────────────────
+
+const form = document.getElementById('lead-form') as HTMLFormElement
+const successEl = document.getElementById('lead-success') as HTMLDivElement
+const submitBtn = document.getElementById('lf-submit') as HTMLButtonElement
+const btnText = document.getElementById('lf-btn-text') as HTMLSpanElement
+const spinner = document.getElementById('lf-spinner') as SVGElement
+const statusEl = document.getElementById('lf-status') as HTMLParagraphElement
+const icsNote = document.getElementById('lead-ics-note') as HTMLParagraphElement
+
+// Validate on blur
+form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('.lf-input').forEach((input) => {
+  input.addEventListener('blur', () => showFieldError(input, validateField(input)))
+  input.addEventListener('input', () => {
+    if (input.getAttribute('aria-invalid')) showFieldError(input, validateField(input))
+  })
+})
+
+function setLoading(loading: boolean) {
+  submitBtn.disabled = loading
+  btnText.textContent = loading ? 'Enviando...' : submitBtn.dataset.label ?? 'Enviar consulta'
+  spinner.classList.toggle('hidden', !loading)
+}
+
+function setError(msg: string) {
+  statusEl.textContent = msg
+  statusEl.className = 'text-sm font-medium text-red-600'
+  statusEl.classList.remove('hidden')
+}
+
+function downloadICS(ics: string) {
+  const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = 'cita.ics'
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
+}
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault()
+
+  // Full client-side validation before sending
+  let valid = true
+  form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('.lf-input').forEach((input) => {
+    const err = validateField(input)
+    showFieldError(input, err)
+    if (err) valid = false
+  })
+  if (!valid) return
+
+  setLoading(true)
+  statusEl.classList.add('hidden')
+
+  // Build payload
+  const data = Object.fromEntries(new FormData(form))
+  const utm = readUtmCookie()
+
+  const payload: Record<string, string> = {}
+  for (const [k, v] of Object.entries(data)) {
+    if (typeof v === 'string' && v.trim()) {
+      payload[k] = k === 'appointment' ? new Date(v).toISOString() : v.trim()
+    }
+  }
+  // Merge attribution
+  if (utm.source) payload.source = utm.source
+  if (utm.medium) payload.medium = utm.medium
+  if (utm.campaign) payload.campaign = utm.campaign
+  payload.referrer = document.referrer || ''
+
+  try {
+    const res = await fetch('/api/lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+
+    const json = await res.json()
+
+    if (!res.ok || !json.ok) {
+      throw new Error(json.error ?? `Error ${res.status}`)
+    }
+
+    // Show success state
+    form.classList.add('hidden')
+    successEl.classList.remove('hidden')
+
+    // Download .ics if present
+    if (json.data?.ics) {
+      downloadICS(json.data.ics)
+      icsNote.classList.remove('hidden')
+    }
+  } catch (err) {
+    setError(err instanceof Error ? err.message : 'Error al enviar. Inténtalo de nuevo.')
+  } finally {
+    setLoading(false)
+  }
+})
+</script>
