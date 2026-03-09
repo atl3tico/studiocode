@@ -7,5 +7,4 @@
 	let { children }: Props = $props();
 </script>
 
-<slot />
 {@render children?.()}
