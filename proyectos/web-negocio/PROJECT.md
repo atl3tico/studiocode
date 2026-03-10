@@ -28,10 +28,10 @@ Elegible como solución **Kit Digital** (Segmento I, II y III).
 ## Milestones Planificados
 | # | Milestone | Estado |
 |---|-----------|--------|
-| 1 | Scaffolding base SvelteKit + Tailwind | Pendiente |
-| 2 | Sistema de captura y gestión de leads | Pendiente |
-| 3 | Módulo de citas (iCal + recordatorios) | Pendiente |
-| 4 | Dashboard CRM básico (admin panel) | Pendiente |
+| 1 | Scaffolding base SvelteKit + Tailwind | ✅ Completado |
+| 2 | Sistema de captura y gestión de leads | ✅ Completado |
+| 3 | Módulo de citas (iCal + recordatorios) | ✅ Completado |
+| 4 | Dashboard CRM básico (admin panel) | ✅ Completado |
 | 5 | Kit Digital: documentación y checklist | Pendiente |
 | 6 | Deploy, dominio, SSL, monitorización | Pendiente |
 
