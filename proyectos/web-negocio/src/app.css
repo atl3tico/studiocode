@@ -58,34 +58,34 @@
 	}
 
 	.badge-new {
-		@apply badge bg-blue-100 text-blue-800;
+		@apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-blue-100 text-blue-800;
 	}
 
 	.badge-contacted {
-		@apply badge bg-yellow-100 text-yellow-800;
+		@apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-yellow-100 text-yellow-800;
 	}
 
 	.badge-qualified {
-		@apply badge bg-green-100 text-green-800;
+		@apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-green-100 text-green-800;
 	}
 
 	.badge-lost {
-		@apply badge bg-red-100 text-red-800;
+		@apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-red-100 text-red-800;
 	}
 
 	.badge-won {
-		@apply badge bg-emerald-100 text-emerald-800;
+		@apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-emerald-100 text-emerald-800;
 	}
 
 	.badge-pending {
-		@apply badge bg-gray-100 text-gray-800;
+		@apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-gray-100 text-gray-800;
 	}
 
 	.badge-confirmed {
-		@apply badge bg-green-100 text-green-800;
+		@apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-green-100 text-green-800;
 	}
 
 	.badge-cancelled {
-		@apply badge bg-red-100 text-red-800;
+		@apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-red-100 text-red-800;
 	}
 }

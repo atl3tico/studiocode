@@ -4,14 +4,14 @@
 	interface Props { data: PageData; }
 	let { data }: Props = $props();
 
-	const statCards = [
+	let statCards = $derived([
 		{ label: 'Total Leads', value: data.stats.total_leads, icon: '👥', color: 'text-brand-600' },
 		{ label: 'Leads Nuevos', value: data.stats.new_leads, icon: '🆕', color: 'text-yellow-600' },
 		{ label: 'Cualificados', value: data.stats.qualified_leads, icon: '⭐', color: 'text-purple-600' },
 		{ label: 'Ganados', value: data.stats.won_leads, icon: '🏆', color: 'text-green-600' },
 		{ label: 'Citas Pendientes', value: data.stats.pending_citas, icon: '⏳', color: 'text-orange-600' },
 		{ label: 'Citas Confirmadas', value: data.stats.confirmed_citas, icon: '✅', color: 'text-emerald-600' }
-	];
+	]);
 
 	function statusBadge(status: string) {
 		const map: Record<string, string> = {
