@@ -1,0 +1,150 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import '../../styles/global.css';
+import { getRestaurantMenu } from '../../lib/cms';
+
+// Fetch menu data from Sanity CMS
+const groupedMenu = await getRestaurantMenu();
+
+// Define fallback data if CMS is empty or errors out during setup
+const fallbackCategories = [
+  {
+    title: "Entrantes",
+    items: [
+      { name: "Ostra Gillardeau N°2", description: "Al natural con granizado de manzana verde y apio", price: 8, isVegetarian: false, isVegan: false, spicyLevel: 0 },
+      { name: "Tartar de Atún Rojo Balfegó", description: "Con emulsión de yuzu, soja blanca y crujiente de alga nori", price: 28, isVegetarian: false, isVegan: false, spicyLevel: 0 },
+      { name: "Foie Gras Mi-Cuit", description: "Mermelada de higos, reducción de Pedro Ximénez y brioche tostado", price: 26, isVegetarian: false, isVegan: false, spicyLevel: 0 },
+      { name: "Vieiras Asadas", description: "Crema de coliflor trufada, avellanas tostadas y aceite de cebollino", price: 24, isVegetarian: false, isVegan: false, spicyLevel: 0 }
+    ]
+  },
+  {
+    title: "Pescados",
+    items: [
+      { name: "Rodaballo Salvaje", description: "A la brasa con bilbaína de tomates secos y puré de patata ratte", price: 38, isVegetarian: false, isVegan: false, spicyLevel: 0 },
+      { name: "Lubina de Estero", description: "Risotto de hinojo, salsa de azafrán y mejillones de roca", price: 34, isVegetarian: false, isVegan: false, spicyLevel: 0 },
+      { name: "Bacalao Negro", description: "Glaseado al miso, tirabeques salteados y dashi de setas shiitake", price: 36, isVegetarian: false, isVegan: false, spicyLevel: 0 }
+    ]
+  },
+  {
+    title: "Carnes",
+    items: [
+      { name: "Solomillo de Vaca Rubia Gallega", description: "Milhojas de patata, chalotas glaseadas y demi-glace al vino tinto", price: 42, isVegetarian: false, isVegan: false, spicyLevel: 0 },
+      { name: "Pichón de Bresse", description: "Asado en su jugo, puré de apionabo y frutos rojos", price: 38, isVegetarian: false, isVegan: false, spicyLevel: 0 },
+      { name: "Magret de Pato", description: "Costra de especias, puré de boniato y salsa de naranja amarga", price: 32, isVegetarian: false, isVegan: false, spicyLevel: 0 }
+    ]
+  },
+  {
+    title: "Postres",
+    items: [
+      { name: "Esfera de Chocolate Valrhona", description: "Mousse de praliné, corazón de fruta de la pasión y helado de vainilla", price: 14, isVegetarian: true, isVegan: false, spicyLevel: 0 },
+      { name: "Tarta Tatin Revisitada", description: "Manzana caramelizada, hojaldre invertido y crema fresca", price: 12, isVegetarian: true, isVegan: false, spicyLevel: 0 },
+      { name: "Cítricos", description: "Sopa de yuzu, bizcocho de limón, merengue suizo y sorbete de mandarina", price: 12, isVegetarian: true, isVegan: false, spicyLevel: 0 }
+    ]
+  }
+];
+
+const hasMenuData = Object.keys(groupedMenu).length > 0;
+const displayCategories = hasMenuData
+  ? Object.entries(groupedMenu).map(([categoryName, dishes]) => ({
+      title: categoryName,
+      items: dishes.map(d => ({
+        name: d.title,
+        description: d.description,
+        price: d.price,
+        imageUrl: d.imageUrl,
+        isVegetarian: d.isVegetarian,
+        isVegan: d.isVegan,
+        spicyLevel: d.spicyLevel
+      }))
+    }))
+  : fallbackCategories;
+---
+
+<Layout title="La Carta | L'ÉLÉGANCE" description="Explore nuestro menú de alta cocina. Sabores exquisitos y presentaciones excepcionales.">
+  <div class="pt-32 pb-24 bg-zinc-950 min-h-screen relative">
+
+    <!-- Background decorative elements -->
+    <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+      <div class="absolute top-[20%] -left-[10%] w-[40%] h-[40%] rounded-full bg-gold-500/5 blur-[120px]"></div>
+      <div class="absolute top-[60%] -right-[10%] w-[40%] h-[40%] rounded-full bg-gold-500/5 blur-[120px]"></div>
+    </div>
+
+    <div class="max-w-4xl mx-auto px-6 relative z-10">
+
+      <!-- Menu Header -->
+      <div class="text-center mb-24">
+        <span class="text-gold-400 font-serif tracking-[0.3em] uppercase text-sm block mb-6">Temporada de Otoño</span>
+        <h1 class="text-5xl md:text-7xl font-serif text-white mb-8 font-light">Nuestra Carta</h1>
+        <div class="w-16 h-[1px] bg-gold-400 mx-auto"></div>
+        <p class="text-zinc-400 mt-8 max-w-2xl mx-auto font-light leading-relaxed">
+          Una cuidadosa selección de platos elaborados con los mejores ingredientes de mercado, donde la técnica culinaria se pone al servicio del sabor puro.
+        </p>
+        {!hasMenuData && (
+          <p class="text-xs text-zinc-600 mt-4 italic">* Mostrando carta de ejemplo. Conecte Sanity CMS para ver el contenido real.</p>
+        )}
+      </div>
+
+      <!-- Menu Categories -->
+      <div class="space-y-24">
+        {displayCategories.map((category) => (
+          <section>
+            <h2 class="text-3xl font-serif text-center text-white mb-12 tracking-widest uppercase font-light">
+              {category.title}
+            </h2>
+            <div class="grid gap-10">
+              {category.items.map((item) => (
+                <article class="group relative flex flex-col md:flex-row justify-between items-baseline gap-4 md:gap-8 hover:bg-zinc-900/30 p-4 -mx-4 rounded-lg transition-colors duration-500">
+                  <div class="flex-1 w-full relative">
+                    <div class="flex flex-col md:flex-row md:items-baseline md:justify-between w-full">
+                      <h3 class="text-xl font-serif text-zinc-100 group-hover:text-gold-400 transition-colors duration-300 flex items-center flex-wrap gap-2">
+                        {item.name}
+                        {item.isVegetarian && <span class="text-green-500 text-xs font-sans tracking-normal border border-green-500/30 px-1.5 py-0.5 rounded-sm bg-green-500/10" title="Vegetariano">V</span>}
+                        {item.isVegan && <span class="text-emerald-400 text-xs font-sans tracking-normal border border-emerald-400/30 px-1.5 py-0.5 rounded-sm bg-emerald-400/10" title="Vegano">VG</span>}
+                        {item.spicyLevel !== undefined && item.spicyLevel > 0 && (
+                          <span class="text-red-500 text-xs tracking-widest ml-1" title={`Nivel de picante: ${item.spicyLevel}`}>
+                            {'🌶️'.repeat(item.spicyLevel)}
+                          </span>
+                        )}
+                      </h3>
+                      <!-- Dot leader for large screens -->
+                      <div class="hidden md:block flex-grow border-b border-dotted border-zinc-700/50 mx-4 opacity-50 group-hover:border-gold-400/30 transition-colors duration-300"></div>
+                      <div class="text-gold-400 font-serif text-xl md:text-right mt-2 md:mt-0 whitespace-nowrap">
+                        {item.price}€
+                      </div>
+                    </div>
+                    {item.description && (
+                      <p class="text-zinc-400 mt-2 font-light text-sm md:text-base md:pr-24 leading-relaxed">
+                        {item.description}
+                      </p>
+                    )}
+                  </div>
+                  {item.imageUrl && (
+                    <div class="w-full md:w-32 h-32 flex-shrink-0 overflow-hidden rounded-sm hidden md:block opacity-0 group-hover:opacity-100 transition-opacity duration-500 absolute -right-4 translate-x-full">
+                       <img
+                          src={item.imageUrl}
+                          alt={item.name}
+                          class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
+                          loading="lazy"
+                        />
+                    </div>
+                  )}
+                </article>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+
+      <!-- Footer Info -->
+      <div class="mt-32 pt-12 border-t border-zinc-900/50 text-center">
+        <p class="text-zinc-500 italic font-light text-sm max-w-lg mx-auto">
+          Precios con IVA incluido. Disponemos de información sobre alérgenos, por favor consulte a nuestro personal antes de realizar su pedido.
+        </p>
+        <p class="text-zinc-500 italic font-light text-sm mt-4">
+          Menú Degustación disponible bajo petición (120€ por persona, maridaje 60€)
+        </p>
+      </div>
+
+    </div>
+  </div>
+</Layout>

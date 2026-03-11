@@ -1,0 +1,70 @@
+---
+const features = [
+  { icon: '⚡', name: 'Ultrarrápida',      desc: 'Carga en menos de 2 segundos. Google lo premia. Tus clientes no esperan. Puntuación 90+ en PageSpeed.' },
+  { icon: '📍', name: 'SEO Local',          desc: 'Aparece cuando alguien busca tu servicio en tu ciudad. Configuramos Google Business Profile contigo.' },
+  { icon: '🟢', name: '99.9% Uptime',       desc: 'Tu web está abierta 24/7. Hosting en servidores europeos con monitoreo continuo y backups diarios.' },
+  { icon: '📱', name: 'Adaptada a móvil',   desc: 'El 70% de tus clientes llegan desde el móvil. Tu web se ve perfecta en cualquier pantalla.' },
+  { icon: '🔒', name: 'Segura y legal',     desc: 'HTTPS, RGPD, política de cookies. Todo en orden para que no tengas problemas legales.' },
+  { icon: '🤝', name: 'Trato cercano',      desc: 'No somos una agencia enorme. Hablamos por WhatsApp, entendemos tu negocio y te explicamos todo.' },
+  { icon: '📊', name: 'Analítica clara',    desc: 'Sabrás cuántas personas visitan tu web, de dónde vienen y qué páginas ven. Sin tecnicismos.' },
+  { icon: '🎨', name: 'Diseño a medida',    desc: 'Nada de plantillas genéricas. Tu web refleja tu identidad y se diferencia de la competencia.' },
+];
+---
+
+<section class="section features-section" id="features">
+  <div class="section-wrap">
+    <div class="features-header animate-in">
+      <div class="section-label" style="color:#A78BF5;">Características</div>
+      <h2 class="section-title" style="color:white;">Webs que tienen sentido</h2>
+      <p class="features-sub">
+        No vendemos tecnología. Vendemos resultados. Estas son las cosas que notarás desde el primer día.
+      </p>
+    </div>
+
+    <div class="features-grid">
+      {features.map((f) => (
+        <div class="feature-card animate-in">
+          <span class="feature-icon">{f.icon}</span>
+          <div class="feature-name">{f.name}</div>
+          <div class="feature-desc">{f.desc}</div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+.features-section { background: var(--dark); color: white; }
+
+.features-sub {
+  color: rgba(255,255,255,0.5);
+  margin-top: 12px;
+  font-size: 1rem;
+  max-width: 480px;
+}
+
+.features-header { margin-bottom: 56px; }
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  max-width: 1100px;
+}
+
+.feature-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 28px 24px;
+  transition: background 0.25s, border-color 0.25s;
+}
+.feature-card:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(107,70,229,0.5);
+}
+
+.feature-icon { font-size: 1.8rem; margin-bottom: 16px; display: block; }
+.feature-name { font-family: 'Fraunces', serif; font-size: 1rem; font-weight: 700; margin-bottom: 8px; color: white; }
+.feature-desc { font-size: 0.86rem; color: rgba(255,255,255,0.55); line-height: 1.6; }
+</style>
