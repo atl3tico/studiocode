@@ -1,5 +1,6 @@
 <script lang="ts">
 	import '../app.css';
+	import CookieBanner from '$lib/components/CookieBanner.svelte';
 
 	interface Props {
 		children: import('svelte').Snippet;
@@ -8,3 +9,4 @@
 </script>
 
 {@render children?.()}
+<CookieBanner />
