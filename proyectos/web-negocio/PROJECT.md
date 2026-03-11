@@ -32,8 +32,8 @@ Elegible como solución **Kit Digital** (Segmento I, II y III).
 | 2 | Sistema de captura y gestión de leads | ✅ Completado |
 | 3 | Módulo de citas (iCal + recordatorios) | ✅ Completado |
 | 4 | Dashboard CRM básico (admin panel) | ✅ Completado |
-| 5 | Kit Digital: documentación y checklist | Pendiente |
-| 6 | Deploy, dominio, SSL, monitorización | Pendiente |
+| 5 | Kit Digital: documentación y checklist | ✅ Completado |
+| 6 | Deploy, dominio, SSL, monitorización | ✅ Completado |
 
 ## Arquitectura de Carpetas (objetivo)
 ```
