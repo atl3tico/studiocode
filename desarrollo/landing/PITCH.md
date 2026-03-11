@@ -1,0 +1,2 @@
+# Oferta: Web Presencia (Gremios)
+"No somos solo programadores, somos especialistas en tu sector. Tu web no será un gasto, será tu mejor escaparate online. Landing page de alta conversión, diseño profesional, optimización SEO avanzada para que tus clientes locales te encuentren siempre primero y un sistema de contacto directo a tu WhatsApp/móvil. Financiado al 100% por el Kit Digital. Pago único, sin sorpresas."
