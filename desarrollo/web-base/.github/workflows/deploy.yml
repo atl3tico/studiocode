@@ -2,7 +2,9 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches: [master]
+    paths:
+      - 'desarrollo/web-base/**'
   workflow_dispatch:
 
 permissions:
@@ -17,18 +19,21 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: desarrollo/web-base
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
+          cache-dependency-path: desarrollo/web-base/package-lock.json
       - run: npm ci
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:
-          # Con node adapter, las páginas estáticas van a dist/client/
-          path: dist/client/
+          path: desarrollo/web-base/dist/client/
 
   deploy:
     needs: build
