@@ -1,0 +1,11 @@
+Sesión iniciada. Contexto cargado:
+
+**Proyecto:** `web-base` — Web Negocio + CRM (SaaS Base)
+**Stack:** SvelteKit 5 + Tailwind v4 + Shadcn Svelte
+**Rama:** `master`
+
+**Estado actual del repo:**
+- `packages/web-base/` — solo existe `CLAUDE.md` (sin `src/` aún)
+- `proyectos/web-negocio/` — tiene cambios sin commit en `app.css`, `LeadForm.svelte`, `admin/+page.svelte`
+
+A la espera de instrucciones para la **Fase 1**. Listo.
