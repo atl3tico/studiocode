@@ -19,11 +19,20 @@ jobs:
         with:
           node-version: 24
       - run: npm install
-      - run: npm run build
+      - run: npx turbo run build
       
-      - name: Deploy
+      # Desplegamos selectivamente solo las carpetas de negocio
+      - name: Deploy Packages
         uses: peaceiris/actions-gh-pages@v3
         with:
           personal_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-          publish_dir: ./dist
-          destination_dir: .
+          publish_dir: ./packages/desarrollo
+          destination_dir: desarrollo
+      
+      - name: Deploy Apps
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          personal_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          publish_dir: ./apps
+          destination_dir: clientes
+EOF
