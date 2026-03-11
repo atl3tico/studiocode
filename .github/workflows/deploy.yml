@@ -21,7 +21,6 @@ jobs:
       - run: npm install
       - run: npx turbo run build
       
-      # Desplegamos selectivamente solo las carpetas de negocio
       - name: Deploy Packages
         uses: peaceiris/actions-gh-pages@v3
         with:
@@ -35,4 +34,3 @@ jobs:
           personal_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           publish_dir: ./apps
           destination_dir: clientes
-EOF
