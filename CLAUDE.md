@@ -1,24 +1,16 @@
-# CLAUDE.md — Root Configuration
+# StudioCode Monorepo (atl3tico/studiocode)
 
-- **Landing Base**: Nuestra base estándar para ofertas de "Web Presencia" (Gremios, fontaneros, albañiles). 
-  - *Modelo*: Pago único, sin suscripciones.
-  - *Stack*: Astro + Tailwind + Sanity.
-  - *Enfoque*: Autoridad local, escaparate digital, contacto directo.
+- **Landing Base (Presencia)**: `packages/desarrollo/landing`
+- **Web Base (CRM/Negocio)**: `packages/desarrollo/crm`
+- **Tienda Base**: `packages/desarrollo/tienda`
 
-- **Web Base**: Nuestra base para "Web Negocio + CRM" (SaaS). 
-  - *Modelo*: Pago por desarrollo + Suscripción mensual por gestión de leads/citas.
-  - *Stack*: SvelteKit + Tailwind + Medusa/CRM integration.
-  - *Enfoque*: Automatización, CRM, recordatorios de citas, leads organizados.
+## Despliegue (GitHub Pages)
+Base URL: https://atl3tico.github.io/studiocode/
 
-- **Tienda Base**: Nuestra base para "Tienda Online".
-  - *Modelo*: Pago por desarrollo + Suscripción (opcional por mantenimiento).
-  - *Stack*: SvelteKit + Tailwind + Medusa.
-  - *Enfoque*: E-commerce de alto rendimiento.
+- `apps/clientes/*` -> Despliegue bajo `/clientes/<nombre>`
+- `packages/desarrollo/*` -> Despliegue bajo `/desarrollo/<nombre>`
 
-## Agentes de Agencia
-- **Max (Main)**: Coordinación y orquestación.
-- **Project Manager**: Planificación de fases y sprints (Reporta en #progreso-web).
-- **Scout**: Prospección con Google Places (Reporta en #busqueda-clientes).
-- **Grant Hunter**: Búsqueda de ayudas/subvenciones (Reporta en #subvenciones).
-- **Finance Tracker**: Finanzas y costes (Reporta en #finanzas).
-- **Growth Hacker**: Estrategia de ventas y copy (Reporta en #leads).
+## Agentes
+- **Max (Main)**: Gestión de orquestación.
+- **Project Manager**: Reportes en #progreso-web.
+- **Scout**: Prospección, reportes en #busqueda-clientes.
