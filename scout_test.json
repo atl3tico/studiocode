@@ -1,0 +1,5 @@
+Usage: goplaces search <query> [flags]
+
+Search places by text query.
+
+Run "goplaces search --help" for more information.

@@ -1,0 +1,1 @@
+const t="SaaS Starter",e="https://saasstarter.work",a="Open source, fast, and free to host SaaS template. Built with SvelteKit, Supabase, Stripe, Tailwind, DaisyUI, and Postgres",s=!0;export{s as C,t as W,e as a,a as b};

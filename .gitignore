@@ -1,11 +1,8 @@
-node_modules/
+node_modules
 .DS_Store
-dist/
-build/
-.svelte-kit/
 .env
 .env.*
-!.env.example
-.agents/
-.claude/
-scout_test.json
+.turbo
+dist
+build
+.svelte-kit
