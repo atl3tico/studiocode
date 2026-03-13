@@ -1,10 +1,25 @@
-import { MedusaClient } from 'sveltekit-medusa-client'
-import { MEDUSA_BACKEND_URL, CLOUDFLARE_ACCESS_ID, CLOUDFLARE_ACCESS_SECRET } from '$env/static/private'
-export default new MedusaClient(MEDUSA_BACKEND_URL, { 
-   headers: {
-      'CF-Access-Client-Id': CLOUDFLARE_ACCESS_ID,
-      'CF-Access-Client-Secret': CLOUDFLARE_ACCESS_SECRET,
-   },
-   retry: 0,
-   persistentCart: true
-})
+// Mock Medusa for now to keep the app running while we migrate to Shopify
+export default {
+    getProducts: async () => [],
+    getProduct: async (slug: string) => ({ id: '1', title: 'Mock Product', price: 0 }),
+    getSearchResults: async (q: string) => [],
+    login: async () => true,
+    register: async () => true,
+    requestResetPassword: async () => true,
+    resetPassword: async () => true,
+    logout: async () => true,
+    editCustomer: async () => true,
+    addShippingAddress: async () => true,
+    deleteAddress: async () => true,
+    getOrder: async () => ({ id: '1', items: [] }),
+    addToCart: async () => ({}),
+    removeFromCart: async () => ({}),
+    updateCart: async () => ({}),
+    completeCart: async () => ({}),
+    createPaymentSessions: async () => ({}),
+    selectPaymentSession: async () => ({}),
+    getShippingOptions: async () => [],
+    selectShippingOption: async () => ({}),
+    updateCartShippingAddress: async () => ({}),
+    handleRequest: async (e: any) => e
+};

@@ -1,11 +1,8 @@
-import type { PageServerLoad } from './$types'
-import medusa from '$lib/server/medusa'
+import { getProducts } from '$lib/server/shopify';
 
-export const load: PageServerLoad = async function () {
-   
-   let products = await medusa.getProducts()
-
-   return { 
-      products
-   }
+export async function load() {
+    const products = await getProducts(10);
+    return {
+        products
+    };
 }
