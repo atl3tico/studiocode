@@ -1,6 +1,6 @@
 # AGENTS.md - Your Workspace
 
-This folder is home. Treat it that way.
+This folder is home. Treat it that way. Please.
 
 ## First Run
 
