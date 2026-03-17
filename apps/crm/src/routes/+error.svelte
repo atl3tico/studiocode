@@ -1,15 +1,16 @@
 <script>
   import "../app.css"
-  import { page } from "$app/stores"
+  import { page } from "$app/state"
+  import { Button } from "$lib/components/ui/button"
 </script>
 
-<div class="hero min-h-[100vh]">
-  <div class="hero-content text-center">
+<div class="flex min-h-screen items-center justify-center">
+  <div class="text-center">
     <div class="max-w-lg">
       <h1 class="text-5xl font-bold">This is embarrassing...</h1>
-      <p class="py-6 text-2xl">There was an error: {$page?.error?.message}</p>
+      <p class="py-6 text-2xl">There was an error: {page?.error?.message}</p>
       <div>
-        <a href="/" class="btn btn-primary btn-wide">Return Home</a>
+        <Button href="/" variant="default" class="min-w-[200px]">Return Home</Button>
       </div>
     </div>
   </div>

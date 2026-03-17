@@ -1,10 +1,12 @@
 <script lang="ts">
-  import { page } from "$app/stores"
+  import { page } from "$app/state"
   import { browser } from "$app/environment"
   import { onMount } from "svelte"
   import Fuse from "fuse.js"
   import { goto } from "$app/navigation"
   import { dev } from "$app/environment"
+  import { Input } from "$lib/components/ui/input"
+  import * as Card from "$lib/components/ui/card"
 
   const fuseOptions = {
     keys: [
@@ -50,8 +52,8 @@
   }
   let results: Result[] = $state([])
 
-  // searchQuery is $page.url.hash minus the "#" at the beginning if present
-  let searchQuery = $state(decodeURIComponent($page.url.hash.slice(1) ?? ""))
+  // searchQuery is page.url.hash minus the "#" at the beginning if present
+  let searchQuery = $state(decodeURIComponent(page.url.hash.slice(1) ?? ""))
   $effect(() => {
     if (fuse) {
       results = fuse.search(searchQuery)
@@ -101,8 +103,8 @@
       Search
     </div>
   </div>
-  <label class="input input-bordered flex items-center gap-2 mt-10 mb-5 w-full">
-    <input
+  <div class="flex items-center gap-2 mt-10 mb-5 w-full">
+    <Input
       id="search-input"
       type="text"
       class="grow w-full"
@@ -111,7 +113,7 @@
       onfocus={() => (focusItem = 0)}
       aria-label="Search input"
     />
-  </label>
+  </div>
 
   {#if loading && searchQuery.length > 0}
     <div class="text-center mt-10 text-accent text-xl">Loading...</div>
@@ -138,16 +140,20 @@
       <a
         href={result.item.path || "/"}
         id="search-result-{i + 1}"
-        class="card my-6 bg-white shadow-xl flex-row overflow-hidden focus:mx-[-10px] focus:my-[-5px] focus:border-4 focus:border-secondary"
+        class="block my-6"
       >
-        <div class="flex-none w-6 md:w-32 bg-secondary"></div>
-        <div class="py-6 px-6">
-          <div class="text-xl">{result.item.title}</div>
-          <div class="text-sm text-accent">
-            {result.item.path}
+        <Card.Root class="bg-white shadow-xl flex-row overflow-hidden focus-within:mx-[-10px] focus-within:my-[-5px] focus-within:border-4 focus-within:border-secondary">
+          <div class="flex flex-row">
+            <div class="flex-none w-6 md:w-32 bg-secondary"></div>
+            <div class="py-6 px-6">
+              <div class="text-xl">{result.item.title}</div>
+              <div class="text-sm text-accent">
+                {result.item.path}
+              </div>
+              <div class="text-slate-500">{result.item.description}</div>
+            </div>
           </div>
-          <div class="text-slate-500">{result.item.description}</div>
-        </div>
+        </Card.Root>
       </a>
     {/each}
   </div>

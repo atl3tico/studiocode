@@ -1,11 +1,13 @@
 <script lang="ts">
-  import { page } from "$app/stores"
+  import { page } from "$app/state"
   import { getContext } from "svelte"
-  import type { Writable } from "svelte/store"
   import SettingsModule from "../settings_module.svelte"
+  import { Button } from "$lib/components/ui/button"
+  import { Alert } from "$lib/components/ui/alert"
+  import { Card, CardContent } from "$lib/components/ui/card"
 
-  let adminSection: Writable<string> = getContext("adminSection")
-  adminSection.set("settings")
+  let adminSection: { value: string } = getContext("adminSection")
+  adminSection.value = "settings"
 
   let { data } = $props()
   let { user, supabase } = data
@@ -32,7 +34,7 @@
     if (email) {
       supabase.auth
         .resetPasswordForEmail(email, {
-          redirectTo: `${$page.url.origin}/auth/callback?next=%2Faccount%2Fsettings%2Freset_password`,
+          redirectTo: `${page.url.origin}/auth/callback?next=%2Faccount%2Fsettings%2Freset_password`,
         })
         .then((d) => {
           sentEmail = d.error ? false : true
@@ -79,34 +81,35 @@
     ]}
   />
 {:else}
-  <div
-    class="card p-6 pb-7 mt-8 max-w-xl flex flex-col md:flex-row shadow-sm max-w-md"
-  >
-    <div class="flex flex-col gap-y-4">
-      {#if usingOAuth}
-        <div class="font-bold">Set Password By Email</div>
+  <Card class="p-6 pb-7 mt-8 max-w-xl flex flex-col md:flex-row shadow-sm max-w-md">
+    <CardContent>
+      <div class="flex flex-col gap-y-4">
+        {#if usingOAuth}
+          <div class="font-bold">Set Password By Email</div>
+          <div>
+            You use oAuth to sign in ("Sign in with Github" or similar). You can
+            continue to access your account using only oAuth if you like!
+          </div>
+        {:else}
+          <div class="font-bold">Change Password By Email</div>
+        {/if}
         <div>
-          You use oAuth to sign in ("Sign in with Github" or similar). You can
-          continue to access your account using only oAuth if you like!
+          The button below will send you an email at {user?.email} which will allow
+          you to set your password.
         </div>
-      {:else}
-        <div class="font-bold">Change Password By Email</div>
-      {/if}
-      <div>
-        The button below will send you an email at {user?.email} which will allow
-        you to set your password.
+        <Button
+          variant="outline"
+          class="min-w-[200px] {sentEmail ? 'hidden' : ''}"
+          disabled={sendBtnDisabled}
+          onclick={sendForgotPassword}
+        >
+          {sendBtnText}
+        </Button>
+        <Alert class="border-success bg-success/10 {sentEmail ? '' : 'hidden'}">
+          Sent email! Please check your inbox and use the link to set your
+          password.
+        </Alert>
       </div>
-      <button
-        class="btn btn-outline btn-wide {sentEmail ? 'hidden' : ''}"
-        disabled={sendBtnDisabled}
-        onclick={sendForgotPassword}
-      >
-        {sendBtnText}
-      </button>
-      <div class="success alert alert-success {sentEmail ? '' : 'hidden'}">
-        Sent email! Please check your inbox and use the link to set your
-        password.
-      </div>
-    </div>
-  </div>
+    </CardContent>
+  </Card>
 {/if}
