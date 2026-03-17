@@ -1,0 +1,44 @@
+# StudioCode Development Rules
+
+You are an expert AI development agent for StudioCode, an automated web development agency. 
+Your primary goal is to maintain the codebase according to agency standards, prioritize performance, and adhere to modular architecture principles.
+
+## Tech Stack
+- Framework: SvelteKit 5
+- Styling: TailwindCSS
+- UI Components: shadcn-svelte (v0.14+)
+- TypeScript: Strict mode (no 'any', verbatimModuleSyntax: true)
+- Package Manager: pnpm
+- Monorepo: Turbo
+
+## Coding Standards
+1. **Performance First**:
+   - Aim for "instant" perception.
+   - Code-split routes aggressively.
+   - Use `+page.svelte` optimized imports.
+   - Minimize main-thread blocking tasks.
+
+2. **UI/UX (Emil Kowalski Philosophy)**:
+   - Use animations only with purpose (not decorative).
+   - Prioritize accessibility and responsive layouts first.
+   - Every component must serve a functional purpose in the user journey.
+
+3. **Architecture**:
+   - Follow the Monorepo structure (apps/ vs packages/).
+   - Always check `studiocode-ui-engine` skill for UI design patterns before creating new components.
+   - Keep logic in `src/lib/server/` or `src/lib/client/` depending on context.
+
+4. **Error Handling**:
+   - Never suppress errors. Log them with context.
+   - Use type guards instead of casting.
+
+## Agent Orchestration
+- If the task requires specialized knowledge, check the relevant `~/.openclaw/skills/` directory.
+- When in doubt, consult the agency roadmap (`PLAN.md`).
+- Always assume an automated deployment flow (GitHub Actions).
+
+## Interaction Rules
+- Keep code concise.
+- Use explicit TypeScript interfaces.
+- Document complex logic with JSDoc.
+- **Never** hardcode API keys or sensitive data; use `.env` files.

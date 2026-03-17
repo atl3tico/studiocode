@@ -1,2 +1,0 @@
-# Oferta: Tienda Online
-"Convierte tu negocio en un canal de venta 24/7. Te montamos una tienda online de alto rendimiento, diseñada para vender, con pagos seguros, gestión de inventario y optimizada para aparecer en Google. Deja de vender solo en tu local y expande tu mercado a toda España mientras automatizamos tu logística y facturación. La tecnología que impulsa a las grandes marcas, a tu alcance mediante el Kit Digital."

@@ -73,11 +73,12 @@
 
 ---
 
-## FASE 4 — App: Store (SvelteKit + Medusa)
+## FASE 4 — App: Store (SvelteKit + Medusa → Shopify)
 
 - [ ] sveltekit-medusa-starter clonado en `apps/store/`
   - Repo origen: `https://github.com/pevey/sveltekit-medusa-starter`
 - [ ] `.git` del repo origen eliminado
+- [ ] Migración a Shopify Storefront API completada
 - [ ] `package.json` actualizado con name `@repo/store`
 - [ ] `@sveltejs/adapter-vercel` instalado
 - [ ] `svelte.config.js` actualizado para usar `adapter-vercel`
@@ -87,14 +88,7 @@
 - [ ] Dev server funciona en puerto 5174
 
 **URLs de servicios externos necesarios:**
-- Medusa backend URL: _________________
-
-> ⚠️ Nota: Para desarrollar localmente la tienda necesitas un backend Medusa corriendo.
-> Instrucciones rápidas para backend local:
-> ```bash
-> npx create-medusa-app@latest medusa-backend --no-boilerplate
-> cd medusa-backend && medusa develop
-> ```
+- Shopify Store Domain: `studiostore.myshopify.com`
 
 ---
 
@@ -108,7 +102,7 @@
   - [ ] `ci.yml` — lint y build en cada PR
   - [ ] `deploy.yml` — deploy manual por app
 
-**URL del repositorio:** https://github.com/___________/___________
+**URL del repositorio:** https://github.com/atl3tico/studiocode
 
 ---
 
@@ -136,10 +130,9 @@
 ### 6.3 Store
 - [ ] Proyecto creado en Vercel: `monorepo-store`
 - [ ] Variables de entorno añadidas en Vercel:
-  - [ ] `PUBLIC_MEDUSA_BACKEND_URL`
-  - [ ] `MEDUSA_BACKEND_URL`
+  - [ ] `PUBLIC_SHOPIFY_STORE_DOMAIN`
+  - [ ] `PUBLIC_SHOPIFY_STOREFRONT_TOKEN`
 - [ ] Ignored Build Step configurado
-- [ ] CORS de Medusa backend actualizado con URL de Vercel
 - [ ] Deploy de producción exitoso
 - **URL:** _________________
 
@@ -152,6 +145,15 @@
 - [ ] Cliente de ejemplo creado para landing: `clients/apps/landing/demo-client/`
 - [ ] Cliente de ejemplo creado para crm: `clients/apps/crm/demo-client/`
 - [ ] Cliente de ejemplo creado para store: `clients/apps/store/demo-client/`
+
+---
+
+## FASE 8 — Data Intelligence & Growth Engine
+
+- [ ] Implementar motor de normalización de datos (CAGR) en `packages/utils/`
+- [ ] Integrar normalización de métricas de ventas en el CRM para lead scoring (Clasificación Lead Caliente/Frío)
+- [ ] Implementar dashboard de decisión (BUY/HOLD) basado en KPIs normalizados
+- [ ] Integrar sistema de purga de caché vía webhooks (Cloudflare/Edge Config)
 
 ---
 
@@ -169,6 +171,7 @@
 
 > Usa esta sección para registrar decisiones, problemas encontrados o cambios de plan.
 
-- Fecha de inicio: _______________
+- Fecha de inicio: 2026-03-11
 - Agente: Claude
-- Última actualización: _______________
+- Última actualización: 2026-03-14
+- Nota: Integración con Shopify Storefront API finalizada con éxito. Implementando lógica de resiliencia en Storefront. Añadida FASE 8 para métricas y CAGR.
