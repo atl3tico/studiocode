@@ -1,0 +1,130 @@
+<script lang="ts">
+  import { page } from "$app/stores";
+  import { base } from "$app/paths";
+  import { goto } from "$app/navigation";
+  import { authStore } from "$lib/data/auth.svelte";
+
+  let { children } = $props();
+  let sidebarOpen = $state(true);
+  let userMenuOpen = $state(false);
+
+  // Guard: redirect to login if not authenticated
+  $effect(() => {
+    if (!authStore.isAuthenticated) {
+      goto(`${base}/login`);
+    }
+  });
+
+  const navItems = [
+    { href: `${base}/crm`, label: "Dashboard", icon: "dashboard" },
+    { href: `${base}/crm/contacts`, label: "Contactos", icon: "contacts" },
+    { href: `${base}/crm/deals`, label: "Ventas", icon: "deals" },
+    { href: `${base}/crm/tasks`, label: "Tareas", icon: "tasks" },
+  ];
+
+  function isActive(href: string): boolean {
+    return $page.url.pathname === href || (href !== `${base}/crm` && $page.url.pathname.startsWith(href));
+  }
+</script>
+
+{#if authStore.isAuthenticated}
+<div class="flex h-screen overflow-hidden bg-background">
+  <!-- Sidebar -->
+  <aside class="hidden md:flex w-64 flex-col border-r border-sidebar-border bg-sidebar shrink-0 {sidebarOpen ? '' : '!w-16'}">
+    <div class="flex h-16 items-center justify-between px-4 border-b border-sidebar-border">
+      {#if sidebarOpen}
+        <a href="{base}/" class="text-lg font-bold text-sidebar-primary">StudioCRM</a>
+      {/if}
+      <button onclick={() => sidebarOpen = !sidebarOpen} class="p-1.5 rounded-md hover:bg-sidebar-accent transition-colors">
+        <svg class="h-5 w-5 text-sidebar-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+    <nav class="flex-1 overflow-y-auto p-3 space-y-1">
+      {#each navItems as item}
+        <a
+          href={item.href}
+          class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors
+            {isActive(item.href) ? 'bg-sidebar-accent text-sidebar-accent-foreground' : 'text-sidebar-foreground hover:bg-sidebar-accent/50'}"
+        >
+          <span class="shrink-0">
+            {#if item.icon === "dashboard"}
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+            {:else if item.icon === "contacts"}
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+            {:else if item.icon === "deals"}
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            {:else if item.icon === "tasks"}
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
+            {/if}
+          </span>
+          {#if sidebarOpen}
+            <span>{item.label}</span>
+          {/if}
+        </a>
+      {/each}
+    </nav>
+    <div class="border-t border-sidebar-border p-3">
+      <a href="{base}/" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-sidebar-foreground hover:bg-sidebar-accent/50 transition-colors">
+        <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+        {#if sidebarOpen}
+          <span>Volver al sitio</span>
+        {/if}
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+    <header class="flex h-16 items-center justify-between border-b border-border px-6">
+      <button class="md:hidden p-1.5 rounded-md hover:bg-muted" aria-label="Menu">
+        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+      <div class="flex-1"></div>
+      {#if authStore.user}
+        <div class="relative">
+          <button
+            onclick={() => userMenuOpen = !userMenuOpen}
+            class="flex items-center gap-2 rounded-md px-2 py-1.5 hover:bg-muted transition-colors"
+          >
+            <div class="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-sm font-medium text-secondary-foreground">
+              {authStore.user.initials}
+            </div>
+            <span class="hidden sm:block text-sm font-medium">{authStore.user.name}</span>
+          </button>
+
+          {#if userMenuOpen}
+            <div
+              class="absolute right-0 mt-1 w-56 rounded-md border border-border bg-popover shadow-lg z-50"
+              role="menu"
+            >
+              <div class="px-4 py-3 border-b border-border">
+                <p class="text-sm font-medium">{authStore.user.name}</p>
+                <p class="text-xs text-muted-foreground">{authStore.user.email}</p>
+                <p class="text-xs text-muted-foreground capitalize">{authStore.user.role}</p>
+              </div>
+              <button
+                onclick={() => { userMenuOpen = false; authStore.logout(); }}
+                class="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-destructive hover:bg-muted transition-colors"
+                role="menuitem"
+              >
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                Cerrar sesion
+              </button>
+            </div>
+          {/if}
+        </div>
+      {/if}
+    </header>
+
+    <main class="flex-1 overflow-y-auto p-6">
+      {@render children()}
+    </main>
+  </div>
+</div>
+{/if}
