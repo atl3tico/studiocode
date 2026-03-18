@@ -1,9 +1,12 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import type { Cart } from '$lib/shopify';
 
 	let { data }: { data: { cart: Cart | null } } = $props();
 	const cart = $derived(data.cart);
 	const lines = $derived(cart?.lines.edges.map((e) => e.node) ?? []);
+
+	let updating = $state<string | null>(null);
 
 	function formatPrice(amount: string, currency: string) {
 		return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(
@@ -33,7 +36,9 @@
 		<div class="divide-y divide-gray-200">
 			{#each lines as line (line.id)}
 				{@const item = line.merchandise}
-				<div class="py-6 flex gap-4">
+				<div
+					class="py-6 flex gap-4 transition-opacity {updating === line.id ? 'opacity-50' : ''}"
+				>
 					<!-- Product image -->
 					{#if item.product.featuredImage}
 						<a
@@ -67,7 +72,18 @@
 
 						<div class="flex items-center gap-3 mt-3">
 							<!-- Quantity controls -->
-							<form method="POST" action="/cart?/update" class="flex items-center gap-1">
+							<form
+								method="POST"
+								action="/cart?/update"
+								class="flex items-center gap-1"
+								use:enhance={() => {
+									updating = line.id;
+									return async ({ update }) => {
+										await update();
+										updating = null;
+									};
+								}}
+							>
 								<input type="hidden" name="lineId" value={line.id} />
 								<input type="hidden" name="quantity" value={Math.max(1, line.quantity - 1)} />
 								<button
@@ -81,7 +97,17 @@
 
 							<span class="text-sm font-medium w-8 text-center">{line.quantity}</span>
 
-							<form method="POST" action="/cart?/update">
+							<form
+								method="POST"
+								action="/cart?/update"
+								use:enhance={() => {
+									updating = line.id;
+									return async ({ update }) => {
+										await update();
+										updating = null;
+									};
+								}}
+							>
 								<input type="hidden" name="lineId" value={line.id} />
 								<input type="hidden" name="quantity" value={line.quantity + 1} />
 								<button
@@ -93,7 +119,18 @@
 							</form>
 
 							<!-- Remove -->
-							<form method="POST" action="/cart?/remove" class="ml-auto">
+							<form
+								method="POST"
+								action="/cart?/remove"
+								class="ml-auto"
+								use:enhance={() => {
+									updating = line.id;
+									return async ({ update }) => {
+										await update();
+										updating = null;
+									};
+								}}
+							>
 								<input type="hidden" name="lineId" value={line.id} />
 								<button
 									type="submit"

@@ -7,7 +7,7 @@ import {
 	CART_LINES_REMOVE_MUTATION,
 	type Cart,
 } from '$lib/shopify';
-import { redirect } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ cookies }) => {
@@ -31,28 +31,37 @@ export const actions: Actions = {
 		const form = await request.formData();
 		const variantId = form.get('variantId') as string;
 
-		if (!variantId) return { error: 'No variant selected' };
+		if (!variantId) return fail(400, { error: 'No variant selected' });
 
 		const cartId = cookies.get('cart_id');
 
-		if (cartId) {
-			const data = await storefront<{ cartLinesAdd: { cart: Cart } }>(CART_LINES_ADD_MUTATION, {
-				cartId,
-				lines: [{ merchandiseId: variantId, quantity: 1 }],
-			});
-			cookies.set('cart_id', data.cartLinesAdd.cart.id, {
-				path: '/',
-				httpOnly: true,
-				sameSite: 'lax',
-			});
-		} else {
-			const data = await storefront<{ cartCreate: { cart: Cart } }>(CART_CREATE_MUTATION, {
-				lines: [{ merchandiseId: variantId, quantity: 1 }],
-			});
-			cookies.set('cart_id', data.cartCreate.cart.id, {
-				path: '/',
-				httpOnly: true,
-				sameSite: 'lax',
+		try {
+			if (cartId) {
+				const data = await storefront<{ cartLinesAdd: { cart: Cart } }>(
+					CART_LINES_ADD_MUTATION,
+					{
+						cartId,
+						lines: [{ merchandiseId: variantId, quantity: 1 }],
+					},
+				);
+				cookies.set('cart_id', data.cartLinesAdd.cart.id, {
+					path: '/',
+					httpOnly: true,
+					sameSite: 'lax',
+				});
+			} else {
+				const data = await storefront<{ cartCreate: { cart: Cart } }>(CART_CREATE_MUTATION, {
+					lines: [{ merchandiseId: variantId, quantity: 1 }],
+				});
+				cookies.set('cart_id', data.cartCreate.cart.id, {
+					path: '/',
+					httpOnly: true,
+					sameSite: 'lax',
+				});
+			}
+		} catch (err) {
+			return fail(500, {
+				error: err instanceof Error ? err.message : 'Failed to add item to cart',
 			});
 		}
 
@@ -65,12 +74,18 @@ export const actions: Actions = {
 		const quantity = parseInt(form.get('quantity') as string, 10);
 		const cartId = cookies.get('cart_id');
 
-		if (!cartId || !lineId || isNaN(quantity)) return { error: 'Invalid request' };
+		if (!cartId || !lineId || isNaN(quantity)) return fail(400, { error: 'Invalid request' });
 
-		await storefront<{ cartLinesUpdate: { cart: Cart } }>(CART_LINES_UPDATE_MUTATION, {
-			cartId,
-			lines: [{ id: lineId, quantity }],
-		});
+		try {
+			await storefront<{ cartLinesUpdate: { cart: Cart } }>(CART_LINES_UPDATE_MUTATION, {
+				cartId,
+				lines: [{ id: lineId, quantity }],
+			});
+		} catch (err) {
+			return fail(500, {
+				error: err instanceof Error ? err.message : 'Failed to update cart',
+			});
+		}
 	},
 
 	remove: async ({ request, cookies }) => {
@@ -78,11 +93,17 @@ export const actions: Actions = {
 		const lineId = form.get('lineId') as string;
 		const cartId = cookies.get('cart_id');
 
-		if (!cartId || !lineId) return { error: 'Invalid request' };
+		if (!cartId || !lineId) return fail(400, { error: 'Invalid request' });
 
-		await storefront<{ cartLinesRemove: { cart: Cart } }>(CART_LINES_REMOVE_MUTATION, {
-			cartId,
-			lineIds: [lineId],
-		});
+		try {
+			await storefront<{ cartLinesRemove: { cart: Cart } }>(CART_LINES_REMOVE_MUTATION, {
+				cartId,
+				lineIds: [lineId],
+			});
+		} catch (err) {
+			return fail(500, {
+				error: err instanceof Error ? err.message : 'Failed to remove item',
+			});
+		}
 	},
 };
