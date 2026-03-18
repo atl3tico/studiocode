@@ -77,7 +77,11 @@
     <div class="divide-y divide-border">
       {#each taskStore.dashboardTasks as task}
         <div class="flex items-center gap-4 p-4">
-          <input type="checkbox" class="h-4 w-4 rounded border-input" />
+          <input
+            type="checkbox"
+            onchange={() => taskStore.toggle(task.id)}
+            class="h-4 w-4 rounded border-input"
+          />
           <div class="flex-1 min-w-0">
             <p class="text-sm font-medium text-card-foreground">{task.title}</p>
             <p class="text-xs text-muted-foreground">{task.contact}</p>

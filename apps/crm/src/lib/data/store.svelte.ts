@@ -118,6 +118,7 @@ export const taskStore = {
 
   get dashboardTasks() {
     return tasks.filter(t => !t.done).slice(0, 4).map(t => ({
+      id: t.id,
       title: t.title,
       contact: t.contact,
       due: t.due,
