@@ -95,3 +95,36 @@ export interface Appointment {
   assignee: string;
   assigneeInitials: string;
 }
+
+// --- Reminder / notification types ---
+
+export type ReminderChannel = "email" | "whatsapp";
+export type ReminderTrigger = "appointment_24h" | "appointment_1h" | "deal_followup" | "task_due" | "custom";
+export type ReminderStatus = "activo" | "enviado" | "fallido" | "cancelado";
+
+export interface Reminder {
+  id: string;
+  tenantId: string;
+  title: string;
+  channel: ReminderChannel;
+  trigger: ReminderTrigger;
+  recipientName: string;
+  recipientContact: string; // email or phone
+  message: string;
+  scheduledAt: string; // ISO datetime
+  status: ReminderStatus;
+  webhookUrl: string; // endpoint for delivery
+  relatedEntityId: string; // appointment/deal/task id
+  relatedEntityType: "appointment" | "deal" | "task";
+  createdAt: string;
+}
+
+export interface WebhookConfig {
+  id: string;
+  tenantId: string;
+  name: string;
+  channel: ReminderChannel;
+  url: string;
+  active: boolean;
+  secret: string;
+}

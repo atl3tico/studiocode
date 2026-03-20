@@ -1,4 +1,4 @@
-import type { Contact, Deal, Task, Activity, Appointment } from "./types";
+import type { Contact, Deal, Task, Activity, Appointment, Reminder, WebhookConfig } from "./types";
 
 // --- TechCorp (t1) seed data ---
 
@@ -101,6 +101,32 @@ const startuplabAppointments: Appointment[] = [
   { id: "ap20", tenantId: "t3", title: "Discovery call", contactName: "Alejandro Vega", contactEmail: "alejandro@neoapps.es", date: "2026-03-20", time: "09:00", duration: 30, status: "confirmada", source: "calendly", notes: "Primera toma de contacto", assignee: "Alejandro Vega", assigneeInitials: "AV" },
 ];
 
+// --- Reminder & webhook seed data ---
+
+const techcorpWebhooks: WebhookConfig[] = [
+  { id: "wh1", tenantId: "t1", name: "Email via SendGrid", channel: "email", url: "https://hooks.studiocrm.com/sendgrid/t1", active: true, secret: "whsec_t1_email_xxx" },
+  { id: "wh2", tenantId: "t1", name: "WhatsApp via Twilio", channel: "whatsapp", url: "https://hooks.studiocrm.com/twilio/t1", active: true, secret: "whsec_t1_wa_xxx" },
+];
+
+const techcorpReminders: Reminder[] = [
+  { id: "rm1", tenantId: "t1", title: "Recordatorio cita: Demo de producto", channel: "email", trigger: "appointment_24h", recipientName: "Pedro Martinez", recipientContact: "pedro@techcorp.es", message: "Tienes una cita manana a las 10:00 - Demo de producto", scheduledAt: "2026-03-19T10:00:00", status: "enviado", webhookUrl: "https://hooks.studiocrm.com/sendgrid/t1", relatedEntityId: "ap1", relatedEntityType: "appointment", createdAt: "2026-03-18T10:00:00" },
+  { id: "rm2", tenantId: "t1", title: "Recordatorio cita: Revision de propuesta", channel: "whatsapp", trigger: "appointment_1h", recipientName: "Laura Fernandez", recipientContact: "+34612345678", message: "Tu cita es en 1 hora - Revision de propuesta", scheduledAt: "2026-03-20T13:00:00", status: "activo", webhookUrl: "https://hooks.studiocrm.com/twilio/t1", relatedEntityId: "ap2", relatedEntityType: "appointment", createdAt: "2026-03-19T14:00:00" },
+  { id: "rm3", tenantId: "t1", title: "Seguimiento deal: App Movil MVP", channel: "email", trigger: "deal_followup", recipientName: "Miguel Torres", recipientContact: "miguel@innovatech.es", message: "Seguimiento pendiente para el deal App Movil MVP", scheduledAt: "2026-03-21T09:00:00", status: "activo", webhookUrl: "https://hooks.studiocrm.com/sendgrid/t1", relatedEntityId: "d4", relatedEntityType: "deal", createdAt: "2026-03-19T09:00:00" },
+  { id: "rm4", tenantId: "t1", title: "Tarea vencida: Llamar a Pedro", channel: "whatsapp", trigger: "task_due", recipientName: "Carlos Demo", recipientContact: "+34698765432", message: "La tarea 'Llamar a Pedro Martinez' vence hoy", scheduledAt: "2026-03-20T08:00:00", status: "enviado", webhookUrl: "https://hooks.studiocrm.com/twilio/t1", relatedEntityId: "t1-t1", relatedEntityType: "task", createdAt: "2026-03-19T20:00:00" },
+  { id: "rm5", tenantId: "t1", title: "Recordatorio cita cancelada", channel: "email", trigger: "appointment_24h", recipientName: "Roberto Gomez", recipientContact: "roberto@websolutions.es", message: "Recordatorio de cita", scheduledAt: "2026-03-17T10:00:00", status: "cancelado", webhookUrl: "https://hooks.studiocrm.com/sendgrid/t1", relatedEntityId: "ap6", relatedEntityType: "appointment", createdAt: "2026-03-16T10:00:00" },
+];
+
+const creativehubWebhooks: WebhookConfig[] = [
+  { id: "wh10", tenantId: "t2", name: "Email via Mailgun", channel: "email", url: "https://hooks.studiocrm.com/mailgun/t2", active: true, secret: "whsec_t2_email_xxx" },
+];
+
+const creativehubReminders: Reminder[] = [
+  { id: "rm10", tenantId: "t2", title: "Recordatorio kickoff branding", channel: "email", trigger: "appointment_24h", recipientName: "Sofia Reyes", recipientContact: "sofia@brandvision.es", message: "Manana tienes el kickoff de branding a las 11:00", scheduledAt: "2026-03-19T11:00:00", status: "enviado", webhookUrl: "https://hooks.studiocrm.com/mailgun/t2", relatedEntityId: "ap10", relatedEntityType: "appointment", createdAt: "2026-03-18T11:00:00" },
+];
+
+const startuplabWebhooks: WebhookConfig[] = [];
+const startuplabReminders: Reminder[] = [];
+
 // --- Seed data indexed by tenant ID ---
 
 export type TenantSeedData = {
@@ -109,15 +135,17 @@ export type TenantSeedData = {
   tasks: Task[];
   activities: Activity[];
   appointments: Appointment[];
+  reminders: Reminder[];
+  webhooks: WebhookConfig[];
 };
 
 const seedByTenant: Record<string, TenantSeedData> = {
-  t1: { contacts: techcorpContacts, deals: techcorpDeals, tasks: techcorpTasks, activities: techcorpActivities, appointments: techcorpAppointments },
-  t2: { contacts: creativehubContacts, deals: creativehubDeals, tasks: creativehubTasks, activities: creativehubActivities, appointments: creativehubAppointments },
-  t3: { contacts: startuplabContacts, deals: startuplabDeals, tasks: startuplabTasks, activities: startuplabActivities, appointments: startuplabAppointments },
+  t1: { contacts: techcorpContacts, deals: techcorpDeals, tasks: techcorpTasks, activities: techcorpActivities, appointments: techcorpAppointments, reminders: techcorpReminders, webhooks: techcorpWebhooks },
+  t2: { contacts: creativehubContacts, deals: creativehubDeals, tasks: creativehubTasks, activities: creativehubActivities, appointments: creativehubAppointments, reminders: creativehubReminders, webhooks: creativehubWebhooks },
+  t3: { contacts: startuplabContacts, deals: startuplabDeals, tasks: startuplabTasks, activities: startuplabActivities, appointments: startuplabAppointments, reminders: startuplabReminders, webhooks: startuplabWebhooks },
 };
 
 /** Get seed data for a tenant. Returns empty arrays for unknown tenants. */
 export function getSeedDataForTenant(tenantId: string): TenantSeedData {
-  return seedByTenant[tenantId] ?? { contacts: [], deals: [], tasks: [], activities: [], appointments: [] };
+  return seedByTenant[tenantId] ?? { contacts: [], deals: [], tasks: [], activities: [], appointments: [], reminders: [], webhooks: [] };
 }

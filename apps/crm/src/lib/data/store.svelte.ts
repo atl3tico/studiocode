@@ -1,4 +1,4 @@
-import type { Contact, Deal, DealStage, Task, Activity, Appointment, AppointmentStatus } from "./types";
+import type { Contact, Deal, DealStage, Task, Activity, Appointment, AppointmentStatus, Reminder, ReminderChannel, ReminderStatus, ReminderTrigger, WebhookConfig } from "./types";
 import { getSeedDataForTenant } from "./mock-data";
 import { tenantStore } from "./tenant.svelte";
 
@@ -45,6 +45,8 @@ let deals = $state<Deal[]>([]);
 let tasks = $state<Task[]>([]);
 let activities = $state<Activity[]>([]);
 let appointments = $state<Appointment[]>([]);
+let reminders = $state<Reminder[]>([]);
+let webhooks = $state<WebhookConfig[]>([]);
 let currentTenantId = $state<string | null>(null);
 
 /** Load data for a tenant (from localStorage or seed data) */
@@ -58,6 +60,8 @@ export function loadTenantData(tenantId: string): void {
   tasks = loadFromStorage<Task[]>(tenantId, "tasks") ?? [...seed.tasks];
   activities = loadFromStorage<Activity[]>(tenantId, "activities") ?? [...seed.activities];
   appointments = loadFromStorage<Appointment[]>(tenantId, "appointments") ?? [...seed.appointments];
+  reminders = loadFromStorage<Reminder[]>(tenantId, "reminders") ?? [...seed.reminders];
+  webhooks = loadFromStorage<WebhookConfig[]>(tenantId, "webhooks") ?? [...seed.webhooks];
 }
 
 /** Clear all in-memory data (on logout) */
@@ -68,6 +72,8 @@ export function clearStoreData(): void {
   tasks = [];
   activities = [];
   appointments = [];
+  reminders = [];
+  webhooks = [];
 }
 
 function persistContacts() {
@@ -84,6 +90,12 @@ function persistActivities() {
 }
 function persistAppointments() {
   if (currentTenantId) saveToStorage(currentTenantId, "appointments", appointments);
+}
+function persistReminders() {
+  if (currentTenantId) saveToStorage(currentTenantId, "reminders", reminders);
+}
+function persistWebhooks() {
+  if (currentTenantId) saveToStorage(currentTenantId, "webhooks", webhooks);
 }
 
 // --- Contacts ---
@@ -303,6 +315,107 @@ export const appointmentStore = {
 
   find(id: string) {
     return appointments.find(a => a.id === id);
+  },
+};
+
+// --- Reminders ---
+
+const triggerLabels: Record<ReminderTrigger, string> = {
+  appointment_24h: "24h antes de cita",
+  appointment_1h: "1h antes de cita",
+  deal_followup: "Seguimiento de deal",
+  task_due: "Tarea por vencer",
+  custom: "Personalizado",
+};
+
+const reminderStatusLabels: Record<ReminderStatus, string> = {
+  activo: "Activo",
+  enviado: "Enviado",
+  fallido: "Fallido",
+  cancelado: "Cancelado",
+};
+
+export const reminderStore = {
+  get list() { return reminders; },
+  get count() { return reminders.length; },
+
+  get active() {
+    return reminders.filter(r => r.status === "activo");
+  },
+
+  get sent() {
+    return reminders.filter(r => r.status === "enviado");
+  },
+
+  triggerLabel(trigger: ReminderTrigger): string {
+    return triggerLabels[trigger];
+  },
+
+  statusLabel(status: ReminderStatus): string {
+    return reminderStatusLabels[status];
+  },
+
+  add(data: Omit<Reminder, "id" | "tenantId" | "createdAt">) {
+    const tenantId = requireTenantId();
+    const reminder: Reminder = { ...data, id: genId("rm"), tenantId, createdAt: new Date().toISOString() };
+    reminders = [reminder, ...reminders];
+    persistReminders();
+    return reminder;
+  },
+
+  update(id: string, data: Partial<Omit<Reminder, "id" | "tenantId">>) {
+    reminders = reminders.map(r => r.id === id ? { ...r, ...data } : r);
+    persistReminders();
+  },
+
+  updateStatus(id: string, status: ReminderStatus) {
+    reminders = reminders.map(r => r.id === id ? { ...r, status } : r);
+    persistReminders();
+  },
+
+  remove(id: string) {
+    reminders = reminders.filter(r => r.id !== id);
+    persistReminders();
+  },
+
+  find(id: string) {
+    return reminders.find(r => r.id === id);
+  },
+};
+
+// --- Webhook Configs ---
+
+export const webhookStore = {
+  get list() { return webhooks; },
+
+  get activeByChannel(): Record<ReminderChannel, WebhookConfig | undefined> {
+    return {
+      email: webhooks.find(w => w.channel === "email" && w.active),
+      whatsapp: webhooks.find(w => w.channel === "whatsapp" && w.active),
+    };
+  },
+
+  add(data: Omit<WebhookConfig, "id" | "tenantId">) {
+    const tenantId = requireTenantId();
+    const config: WebhookConfig = { ...data, id: genId("wh"), tenantId };
+    webhooks = [config, ...webhooks];
+    persistWebhooks();
+    return config;
+  },
+
+  update(id: string, data: Partial<Omit<WebhookConfig, "id" | "tenantId">>) {
+    webhooks = webhooks.map(w => w.id === id ? { ...w, ...data } : w);
+    persistWebhooks();
+  },
+
+  toggle(id: string) {
+    webhooks = webhooks.map(w => w.id === id ? { ...w, active: !w.active } : w);
+    persistWebhooks();
+  },
+
+  remove(id: string) {
+    webhooks = webhooks.filter(w => w.id !== id);
+    persistWebhooks();
   },
 };
 
