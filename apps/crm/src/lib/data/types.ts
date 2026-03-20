@@ -128,3 +128,35 @@ export interface WebhookConfig {
   active: boolean;
   secret: string;
 }
+
+// --- Tenant configuration types ---
+
+export interface DealStageConfig {
+  key: string;
+  label: string;
+  color: string;
+}
+
+export interface TaskTypeConfig {
+  key: string;
+  label: string;
+}
+
+export interface TenantConfig {
+  tenantId: string;
+  companyName: string;
+  industry: string;
+  dealStages: DealStageConfig[];
+  taskTypes: TaskTypeConfig[];
+  appointmentDurations: number[]; // minutes
+  currency: string;
+  locale: string;
+  timezone: string;
+  features: {
+    appointments: boolean;
+    reminders: boolean;
+    webhooks: boolean;
+    emailIntegration: boolean;
+    whatsappIntegration: boolean;
+  };
+}

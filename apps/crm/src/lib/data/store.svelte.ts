@@ -1,4 +1,4 @@
-import type { Contact, Deal, DealStage, Task, Activity, Appointment, AppointmentStatus, Reminder, ReminderChannel, ReminderStatus, ReminderTrigger, WebhookConfig } from "./types";
+import type { Contact, Deal, DealStage, Task, Activity, Appointment, AppointmentStatus, Reminder, ReminderChannel, ReminderStatus, ReminderTrigger, WebhookConfig, TenantConfig } from "./types";
 import { getSeedDataForTenant } from "./mock-data";
 import { tenantStore } from "./tenant.svelte";
 
@@ -47,7 +47,42 @@ let activities = $state<Activity[]>([]);
 let appointments = $state<Appointment[]>([]);
 let reminders = $state<Reminder[]>([]);
 let webhooks = $state<WebhookConfig[]>([]);
+let tenantConfig = $state<TenantConfig | null>(null);
 let currentTenantId = $state<string | null>(null);
+
+function defaultConfig(tenantId: string): TenantConfig {
+  const tenant = tenantStore.current;
+  return {
+    tenantId,
+    companyName: tenant?.name ?? "",
+    industry: "general",
+    dealStages: [
+      { key: "prospeccion", label: "Prospeccion", color: "#3b82f6" },
+      { key: "calificacion", label: "Calificacion", color: "#8b5cf6" },
+      { key: "propuesta", label: "Propuesta", color: "#f59e0b" },
+      { key: "negociacion", label: "Negociacion", color: "#ef4444" },
+      { key: "cierre", label: "Cierre", color: "#22c55e" },
+    ],
+    taskTypes: [
+      { key: "llamada", label: "Llamada" },
+      { key: "email", label: "Email" },
+      { key: "reunion", label: "Reunion" },
+      { key: "seguimiento", label: "Seguimiento" },
+      { key: "admin", label: "Admin" },
+    ],
+    appointmentDurations: [15, 30, 45, 60, 90, 120],
+    currency: tenant?.settings.currency ?? "EUR",
+    locale: tenant?.settings.locale ?? "es-ES",
+    timezone: tenant?.settings.timezone ?? "Europe/Madrid",
+    features: {
+      appointments: true,
+      reminders: true,
+      webhooks: true,
+      emailIntegration: true,
+      whatsappIntegration: tenant?.plan !== "free",
+    },
+  };
+}
 
 /** Load data for a tenant (from localStorage or seed data) */
 export function loadTenantData(tenantId: string): void {
@@ -62,6 +97,7 @@ export function loadTenantData(tenantId: string): void {
   appointments = loadFromStorage<Appointment[]>(tenantId, "appointments") ?? [...seed.appointments];
   reminders = loadFromStorage<Reminder[]>(tenantId, "reminders") ?? [...seed.reminders];
   webhooks = loadFromStorage<WebhookConfig[]>(tenantId, "webhooks") ?? [...seed.webhooks];
+  tenantConfig = loadFromStorage<TenantConfig>(tenantId, "config") ?? defaultConfig(tenantId);
 }
 
 /** Clear all in-memory data (on logout) */
@@ -74,6 +110,7 @@ export function clearStoreData(): void {
   appointments = [];
   reminders = [];
   webhooks = [];
+  tenantConfig = null;
 }
 
 function persistContacts() {
@@ -96,6 +133,9 @@ function persistReminders() {
 }
 function persistWebhooks() {
   if (currentTenantId) saveToStorage(currentTenantId, "webhooks", webhooks);
+}
+function persistConfig() {
+  if (currentTenantId && tenantConfig) saveToStorage(currentTenantId, "config", tenantConfig);
 }
 
 // --- Contacts ---
@@ -416,6 +456,53 @@ export const webhookStore = {
   remove(id: string) {
     webhooks = webhooks.filter(w => w.id !== id);
     persistWebhooks();
+  },
+};
+
+// --- Tenant Config ---
+
+export const configStore = {
+  get current() { return tenantConfig; },
+
+  get dealStages() { return tenantConfig?.dealStages ?? []; },
+  get taskTypes() { return tenantConfig?.taskTypes ?? []; },
+  get appointmentDurations() { return tenantConfig?.appointmentDurations ?? [30]; },
+  get features() { return tenantConfig?.features ?? { appointments: true, reminders: true, webhooks: true, emailIntegration: true, whatsappIntegration: false }; },
+
+  updateGeneral(data: { companyName: string; industry: string; currency: string; locale: string; timezone: string }) {
+    if (!tenantConfig) return;
+    tenantConfig = { ...tenantConfig, ...data };
+    persistConfig();
+  },
+
+  updateFeatures(features: TenantConfig["features"]) {
+    if (!tenantConfig) return;
+    tenantConfig = { ...tenantConfig, features };
+    persistConfig();
+  },
+
+  updateDealStages(stages: TenantConfig["dealStages"]) {
+    if (!tenantConfig) return;
+    tenantConfig = { ...tenantConfig, dealStages: stages };
+    persistConfig();
+  },
+
+  updateTaskTypes(types: TenantConfig["taskTypes"]) {
+    if (!tenantConfig) return;
+    tenantConfig = { ...tenantConfig, taskTypes: types };
+    persistConfig();
+  },
+
+  updateAppointmentDurations(durations: number[]) {
+    if (!tenantConfig) return;
+    tenantConfig = { ...tenantConfig, appointmentDurations: durations };
+    persistConfig();
+  },
+
+  reset() {
+    if (!currentTenantId) return;
+    tenantConfig = defaultConfig(currentTenantId);
+    persistConfig();
   },
 };
 
