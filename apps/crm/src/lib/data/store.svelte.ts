@@ -1,5 +1,6 @@
-import type { Contact, Deal, DealStage, Task, Activity } from "./types";
-import { seedContacts, seedDeals, seedTasks, seedActivities } from "./mock-data";
+import type { Contact, Deal, DealStage, Task, Activity, Appointment, AppointmentStatus } from "./types";
+import { getSeedDataForTenant } from "./mock-data";
+import { tenantStore } from "./tenant.svelte";
 
 let nextId = 100;
 function genId(prefix: string): string {
@@ -10,27 +11,104 @@ function formatCurrency(n: number): string {
   return `€${n.toLocaleString("es-ES")}`;
 }
 
-// --- Contacts ---
+function requireTenantId(): string {
+  const tenant = tenantStore.current;
+  if (!tenant) throw new Error("No active tenant");
+  return tenant.id;
+}
 
-let contacts = $state<Contact[]>([...seedContacts]);
+// --- Tenant-scoped localStorage helpers ---
+
+function storageKey(tenantId: string, store: string): string {
+  return `studiocrm_${tenantId}_${store}`;
+}
+
+function loadFromStorage<T>(tenantId: string, store: string): T | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem(storageKey(tenantId, store));
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function saveToStorage<T>(tenantId: string, store: string, data: T): void {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(storageKey(tenantId, store), JSON.stringify(data));
+}
+
+// --- State ---
+
+let contacts = $state<Contact[]>([]);
+let deals = $state<Deal[]>([]);
+let tasks = $state<Task[]>([]);
+let activities = $state<Activity[]>([]);
+let appointments = $state<Appointment[]>([]);
+let currentTenantId = $state<string | null>(null);
+
+/** Load data for a tenant (from localStorage or seed data) */
+export function loadTenantData(tenantId: string): void {
+  if (currentTenantId === tenantId) return;
+  currentTenantId = tenantId;
+
+  const seed = getSeedDataForTenant(tenantId);
+  contacts = loadFromStorage<Contact[]>(tenantId, "contacts") ?? [...seed.contacts];
+  deals = loadFromStorage<Deal[]>(tenantId, "deals") ?? [...seed.deals];
+  tasks = loadFromStorage<Task[]>(tenantId, "tasks") ?? [...seed.tasks];
+  activities = loadFromStorage<Activity[]>(tenantId, "activities") ?? [...seed.activities];
+  appointments = loadFromStorage<Appointment[]>(tenantId, "appointments") ?? [...seed.appointments];
+}
+
+/** Clear all in-memory data (on logout) */
+export function clearStoreData(): void {
+  currentTenantId = null;
+  contacts = [];
+  deals = [];
+  tasks = [];
+  activities = [];
+  appointments = [];
+}
+
+function persistContacts() {
+  if (currentTenantId) saveToStorage(currentTenantId, "contacts", contacts);
+}
+function persistDeals() {
+  if (currentTenantId) saveToStorage(currentTenantId, "deals", deals);
+}
+function persistTasks() {
+  if (currentTenantId) saveToStorage(currentTenantId, "tasks", tasks);
+}
+function persistActivities() {
+  if (currentTenantId) saveToStorage(currentTenantId, "activities", activities);
+}
+function persistAppointments() {
+  if (currentTenantId) saveToStorage(currentTenantId, "appointments", appointments);
+}
+
+// --- Contacts ---
 
 export const contactStore = {
   get list() { return contacts; },
   get count() { return contacts.length; },
 
-  add(data: Omit<Contact, "id" | "initials">) {
+  add(data: Omit<Contact, "id" | "initials" | "tenantId">) {
+    const tenantId = requireTenantId();
     const initials = data.name.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
-    const contact: Contact = { ...data, id: genId("c"), initials };
+    const contact: Contact = { ...data, id: genId("c"), initials, tenantId };
     contacts = [contact, ...contacts];
+    persistContacts();
     return contact;
   },
 
-  update(id: string, data: Partial<Omit<Contact, "id">>) {
+  update(id: string, data: Partial<Omit<Contact, "id" | "tenantId">>) {
     contacts = contacts.map(c => c.id === id ? { ...c, ...data } : c);
+    persistContacts();
   },
 
   remove(id: string) {
     contacts = contacts.filter(c => c.id !== id);
+    persistContacts();
   },
 
   find(id: string) {
@@ -39,8 +117,6 @@ export const contactStore = {
 };
 
 // --- Deals ---
-
-let deals = $state<Deal[]>([...seedDeals]);
 
 const stageOrder: DealStage[] = ["prospeccion", "calificacion", "propuesta", "negociacion", "cierre"];
 const stageLabels: Record<DealStage, string> = {
@@ -89,28 +165,31 @@ export const dealStore = {
     return formatCurrency(closed.reduce((sum, d) => sum + d.value, 0));
   },
 
-  add(data: Omit<Deal, "id">) {
-    const deal: Deal = { ...data, id: genId("d") };
+  add(data: Omit<Deal, "id" | "tenantId">) {
+    const tenantId = requireTenantId();
+    const deal: Deal = { ...data, id: genId("d"), tenantId };
     deals = [deal, ...deals];
+    persistDeals();
     return deal;
   },
 
-  update(id: string, data: Partial<Omit<Deal, "id">>) {
+  update(id: string, data: Partial<Omit<Deal, "id" | "tenantId">>) {
     deals = deals.map(d => d.id === id ? { ...d, ...data } : d);
+    persistDeals();
   },
 
   move(id: string, stage: DealStage) {
     deals = deals.map(d => d.id === id ? { ...d, stage } : d);
+    persistDeals();
   },
 
   remove(id: string) {
     deals = deals.filter(d => d.id !== id);
+    persistDeals();
   },
 };
 
 // --- Tasks ---
-
-let tasks = $state<Task[]>([...seedTasks]);
 
 export const taskStore = {
   get list() { return tasks; },
@@ -126,36 +205,104 @@ export const taskStore = {
     }));
   },
 
-  add(data: Omit<Task, "id">) {
-    const task: Task = { ...data, id: genId("t") };
+  add(data: Omit<Task, "id" | "tenantId">) {
+    const tenantId = requireTenantId();
+    const task: Task = { ...data, id: genId("t"), tenantId };
     tasks = [task, ...tasks];
+    persistTasks();
     return task;
   },
 
-  update(id: string, data: Partial<Omit<Task, "id">>) {
+  update(id: string, data: Partial<Omit<Task, "id" | "tenantId">>) {
     tasks = tasks.map(t => t.id === id ? { ...t, ...data } : t);
+    persistTasks();
   },
 
   toggle(id: string) {
     tasks = tasks.map(t => t.id === id ? { ...t, done: !t.done } : t);
+    persistTasks();
   },
 
   remove(id: string) {
     tasks = tasks.filter(t => t.id !== id);
+    persistTasks();
   },
 };
 
 // --- Activities ---
 
-let activities = $state<Activity[]>([...seedActivities]);
-
 export const activityStore = {
   get list() { return activities; },
 
-  add(data: Omit<Activity, "id">) {
-    const activity: Activity = { ...data, id: genId("a") };
+  add(data: Omit<Activity, "id" | "tenantId">) {
+    const tenantId = requireTenantId();
+    const activity: Activity = { ...data, id: genId("a"), tenantId };
     activities = [activity, ...activities];
+    persistActivities();
     return activity;
+  },
+};
+
+// --- Appointments ---
+
+const statusLabels: Record<AppointmentStatus, string> = {
+  programada: "Programada",
+  confirmada: "Confirmada",
+  completada: "Completada",
+  cancelada: "Cancelada",
+};
+
+export const appointmentStore = {
+  get list() { return appointments; },
+  get count() { return appointments.length; },
+
+  get upcoming() {
+    const today = new Date().toISOString().slice(0, 10);
+    return appointments
+      .filter(a => a.date >= today && a.status !== "cancelada" && a.status !== "completada")
+      .sort((a, b) => a.date === b.date ? a.time.localeCompare(b.time) : a.date.localeCompare(b.date));
+  },
+
+  get todayCount() {
+    const today = new Date().toISOString().slice(0, 10);
+    return appointments.filter(a => a.date === today && a.status !== "cancelada").length;
+  },
+
+  getByDate(date: string) {
+    return appointments
+      .filter(a => a.date === date)
+      .sort((a, b) => a.time.localeCompare(b.time));
+  },
+
+  statusLabel(status: AppointmentStatus): string {
+    return statusLabels[status];
+  },
+
+  add(data: Omit<Appointment, "id" | "tenantId">) {
+    const tenantId = requireTenantId();
+    const appointment: Appointment = { ...data, id: genId("ap"), tenantId };
+    appointments = [appointment, ...appointments];
+    persistAppointments();
+    return appointment;
+  },
+
+  update(id: string, data: Partial<Omit<Appointment, "id" | "tenantId">>) {
+    appointments = appointments.map(a => a.id === id ? { ...a, ...data } : a);
+    persistAppointments();
+  },
+
+  updateStatus(id: string, status: AppointmentStatus) {
+    appointments = appointments.map(a => a.id === id ? { ...a, status } : a);
+    persistAppointments();
+  },
+
+  remove(id: string) {
+    appointments = appointments.filter(a => a.id !== id);
+    persistAppointments();
+  },
+
+  find(id: string) {
+    return appointments.find(a => a.id === id);
   },
 };
 
