@@ -1,5 +1,7 @@
 import { goto } from "$app/navigation";
 import { base } from "$app/paths";
+import { tenantStore } from "./tenant.svelte";
+import { clearStoreData } from "./store.svelte";
 
 export interface AuthUser {
   id: string;
@@ -51,6 +53,8 @@ export const authStore = {
   logout() {
     currentUser = null;
     localStorage.removeItem(STORAGE_KEY);
+    clearStoreData();
+    tenantStore.clear();
     goto(`${base}/login`);
   },
 };

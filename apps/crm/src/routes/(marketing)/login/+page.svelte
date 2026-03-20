@@ -11,7 +11,7 @@
   // Redirect if already logged in
   $effect(() => {
     if (authStore.isAuthenticated) {
-      goto(`${base}/crm`);
+      goto(`${base}/select-tenant`);
     }
   });
 
@@ -27,7 +27,7 @@
     loading = false;
 
     if (result.success) {
-      goto(`${base}/crm`);
+      goto(`${base}/select-tenant`);
     } else {
       error = result.error ?? "Error de autenticacion";
     }
@@ -38,7 +38,7 @@
     password = "demo";
     const result = authStore.login(userEmail, "demo");
     if (result.success) {
-      goto(`${base}/crm`);
+      goto(`${base}/select-tenant`);
     }
   }
 </script>

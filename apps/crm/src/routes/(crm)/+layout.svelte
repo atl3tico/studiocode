@@ -3,10 +3,13 @@
   import { base } from "$app/paths";
   import { goto } from "$app/navigation";
   import { authStore } from "$lib/data/auth.svelte";
+  import { tenantStore } from "$lib/data/tenant.svelte";
+  import { loadTenantData, clearStoreData } from "$lib/data/store.svelte";
 
   let { children } = $props();
   let sidebarOpen = $state(true);
   let userMenuOpen = $state(false);
+  let tenantMenuOpen = $state(false);
 
   // Guard: redirect to login if not authenticated
   $effect(() => {
@@ -14,6 +17,30 @@
       goto(`${base}/login`);
     }
   });
+
+  // Guard: redirect to tenant selector if no tenant
+  $effect(() => {
+    if (authStore.isAuthenticated && !tenantStore.isSet) {
+      goto(`${base}/select-tenant`);
+    }
+  });
+
+  // Load tenant data when tenant is set
+  $effect(() => {
+    if (tenantStore.current) {
+      loadTenantData(tenantStore.current.id);
+    }
+  });
+
+  const userId = $derived(authStore.user?.id ?? "");
+  const userTenants = $derived(tenantStore.getTenantsForUser(userId));
+
+  function switchTenant(tenant: import("$lib/data/types").Tenant) {
+    tenantMenuOpen = false;
+    clearStoreData();
+    tenantStore.setTenant(tenant);
+    loadTenantData(tenant.id);
+  }
 
   const navItems = [
     { href: `${base}/crm`, label: "Dashboard", icon: "dashboard" },
@@ -83,6 +110,52 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
         </svg>
       </button>
+      <!-- Tenant switcher -->
+      {#if tenantStore.current}
+        <div class="relative">
+          <button
+            onclick={() => { tenantMenuOpen = !tenantMenuOpen; userMenuOpen = false; }}
+            class="flex items-center gap-2 rounded-md px-2 py-1.5 hover:bg-muted transition-colors"
+          >
+            <div class="h-7 w-7 rounded bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
+              {tenantStore.current.name.charAt(0)}
+            </div>
+            <span class="hidden sm:block text-sm font-medium truncate max-w-[160px]">{tenantStore.current.name}</span>
+            <svg class="h-4 w-4 text-muted-foreground shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          {#if tenantMenuOpen}
+            <div class="absolute left-0 mt-1 w-64 rounded-md border border-border bg-popover shadow-lg z-50">
+              <div class="px-3 py-2 border-b border-border">
+                <p class="text-xs font-medium text-muted-foreground">Cambiar organizacion</p>
+              </div>
+              {#each userTenants as tenant}
+                <button
+                  onclick={() => switchTenant(tenant)}
+                  class="w-full flex items-center gap-3 px-3 py-2.5 text-sm hover:bg-muted transition-colors text-left
+                    {tenant.id === tenantStore.current?.id ? 'bg-muted/50' : ''}"
+                >
+                  <div class="h-8 w-8 rounded bg-primary/10 flex items-center justify-center text-xs font-bold text-primary shrink-0">
+                    {tenant.name.charAt(0)}
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <div class="font-medium truncate">{tenant.name}</div>
+                    <div class="text-xs text-muted-foreground">{tenant.slug}</div>
+                  </div>
+                  {#if tenant.id === tenantStore.current?.id}
+                    <svg class="h-4 w-4 text-primary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                  {/if}
+                </button>
+              {/each}
+            </div>
+          {/if}
+        </div>
+      {/if}
+
       <div class="flex-1"></div>
       {#if authStore.user}
         <div class="relative">
