@@ -1,0 +1,12 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "sveltekit",
+  "installCommand": "pnpm install",
+  "buildCommand": "cd ../.. && pnpm turbo build --filter=crm-studiocode",
+  "outputDirectory": ".svelte-kit/output",
+  "git": {
+    "deploymentEnabled": {
+      "main": true
+    }
+  }
+}
