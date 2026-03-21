@@ -65,7 +65,7 @@
       {#if sidebarOpen}
         <a href="{base}/" class="text-lg font-bold text-sidebar-primary">StudioCRM</a>
       {/if}
-      <button onclick={() => sidebarOpen = !sidebarOpen} class="p-1.5 rounded-md hover:bg-sidebar-accent transition-colors">
+      <button onclick={() => sidebarOpen = !sidebarOpen} aria-label={sidebarOpen ? 'Colapsar barra lateral' : 'Expandir barra lateral'} class="p-1.5 rounded-md hover:bg-sidebar-accent transition-colors">
         <svg class="h-5 w-5 text-sidebar-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
         </svg>

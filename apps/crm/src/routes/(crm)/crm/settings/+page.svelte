@@ -287,6 +287,7 @@
             {configStore.features[feature.key as keyof typeof configStore.features] ? 'bg-primary' : 'bg-muted'}"
           role="switch"
           aria-checked={configStore.features[feature.key as keyof typeof configStore.features]}
+          aria-label={feature.label}
         >
           <span
             class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform shadow-sm

@@ -1,0 +1,8 @@
+{
+  "tasks": {
+    "CRM-1-MultiTenancy": { "status": "pending", "agent": "Claude", "retry": 0, "last_error": null },
+    "CRM-2-Scheduler": { "status": "pending", "agent": "Claude", "retry": 0, "last_error": null },
+    "CRM-3-Reminders": { "status": "pending", "agent": "Claude", "retry": 0, "last_error": null },
+    "CRM-4-Configuration": { "status": "pending", "agent": "Claude", "retry": 0, "last_error": null }
+  }
+}

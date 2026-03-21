@@ -1,0 +1,6 @@
+{
+  "framework": "sveltekit",
+  "buildCommand": "pnpm --filter store-studiocode build",
+  "devCommand": "pnpm --filter store-studiocode dev",
+  "installCommand": "pnpm install"
+}
