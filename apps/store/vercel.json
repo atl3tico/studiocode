@@ -1,6 +1,12 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "sveltekit",
-  "buildCommand": "pnpm --filter store-studiocode build",
-  "devCommand": "pnpm --filter store-studiocode dev",
-  "installCommand": "pnpm install"
+  "installCommand": "pnpm install",
+  "buildCommand": "cd ../.. && pnpm turbo build --filter=store-studiocode",
+  "outputDirectory": ".svelte-kit/output",
+  "git": {
+    "deploymentEnabled": {
+      "main": true
+    }
+  }
 }
