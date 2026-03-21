@@ -2,6 +2,11 @@ import { sveltekit } from "@sveltejs/kit/vite"
 import { defineConfig } from "vite"
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      'svelte/client': 'svelte'
+    }
+  },
   build: {
     rollupOptions: {
       output: {
