@@ -6,6 +6,7 @@ import {
 	CART_LINES_UPDATE_MUTATION,
 	CART_LINES_REMOVE_MUTATION,
 	type Cart,
+	ShopifyError,
 } from '$lib/shopify';
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
@@ -18,9 +19,12 @@ export const load: PageServerLoad = async ({ cookies }) => {
 	}
 
 	try {
-		const data = await storefront<{ cart: Cart | null }>(CART_QUERY, { cartId });
+		const data = await storefront<{ cart: Cart | null }>(CART_QUERY, { cartId }, { retries: 1 });
 		return { cart: data.cart };
-	} catch {
+	} catch (err) {
+		if (err instanceof ShopifyError) {
+			console.error('Shopify cart error:', err.message);
+		}
 		cookies.delete('cart_id', { path: '/' });
 		return { cart: null };
 	}
@@ -43,6 +47,7 @@ export const actions: Actions = {
 						cartId,
 						lines: [{ merchandiseId: variantId, quantity: 1 }],
 					},
+					{ retries: 1 }
 				);
 				cookies.set('cart_id', data.cartLinesAdd.cart.id, {
 					path: '/',
@@ -50,9 +55,13 @@ export const actions: Actions = {
 					sameSite: 'lax',
 				});
 			} else {
-				const data = await storefront<{ cartCreate: { cart: Cart } }>(CART_CREATE_MUTATION, {
-					lines: [{ merchandiseId: variantId, quantity: 1 }],
-				});
+				const data = await storefront<{ cartCreate: { cart: Cart } }>(
+					CART_CREATE_MUTATION,
+					{
+						lines: [{ merchandiseId: variantId, quantity: 1 }],
+					},
+					{ retries: 1 }
+				);
 				cookies.set('cart_id', data.cartCreate.cart.id, {
 					path: '/',
 					httpOnly: true,
@@ -60,9 +69,8 @@ export const actions: Actions = {
 				});
 			}
 		} catch (err) {
-			return fail(500, {
-				error: err instanceof Error ? err.message : 'Failed to add item to cart',
-			});
+			const message = err instanceof ShopifyError ? err.message : 'Failed to add item to cart';
+			return fail(503, { error: message, recoverable: true });
 		}
 
 		redirect(303, '/cart');
@@ -77,14 +85,17 @@ export const actions: Actions = {
 		if (!cartId || !lineId || isNaN(quantity)) return fail(400, { error: 'Invalid request' });
 
 		try {
-			await storefront<{ cartLinesUpdate: { cart: Cart } }>(CART_LINES_UPDATE_MUTATION, {
-				cartId,
-				lines: [{ id: lineId, quantity }],
-			});
+			await storefront<{ cartLinesUpdate: { cart: Cart } }>(
+				CART_LINES_UPDATE_MUTATION,
+				{
+					cartId,
+					lines: [{ id: lineId, quantity }],
+				},
+				{ retries: 1 }
+			);
 		} catch (err) {
-			return fail(500, {
-				error: err instanceof Error ? err.message : 'Failed to update cart',
-			});
+			const message = err instanceof ShopifyError ? err.message : 'Failed to update cart';
+			return fail(503, { error: message, recoverable: true });
 		}
 	},
 
@@ -96,14 +107,17 @@ export const actions: Actions = {
 		if (!cartId || !lineId) return fail(400, { error: 'Invalid request' });
 
 		try {
-			await storefront<{ cartLinesRemove: { cart: Cart } }>(CART_LINES_REMOVE_MUTATION, {
-				cartId,
-				lineIds: [lineId],
-			});
+			await storefront<{ cartLinesRemove: { cart: Cart } }>(
+				CART_LINES_REMOVE_MUTATION,
+				{
+					cartId,
+					lineIds: [lineId],
+				},
+				{ retries: 1 }
+			);
 		} catch (err) {
-			return fail(500, {
-				error: err instanceof Error ? err.message : 'Failed to remove item',
-			});
+			const message = err instanceof ShopifyError ? err.message : 'Failed to remove item';
+			return fail(503, { error: message, recoverable: true });
 		}
 	},
 };
